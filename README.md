@@ -3,7 +3,7 @@
 A modern full-stack blogging platform built with **React.js**,
 **Node.js**, **Express.js**, and **MongoDB**.
 
-------------------------------------------------------------------------
+---
 
 ## Overview
 
@@ -12,124 +12,121 @@ Medium while allowing users to create, save, publish, and manage blogs.
 
 ### Goals
 
--   Secure authentication
--   Draft & publish workflow
--   Rich blog management
--   Search and category filtering
--   Responsive UI
--   Scalable architecture
+- Secure authentication
+- Draft & publish workflow
+- Rich blog management
+- Search and category filtering
+- Responsive UI
+- Scalable architecture
 
-------------------------------------------------------------------------
+---
 
 # Tech Stack
 
 ## Frontend
 
--   React.js
--   React Router
--   Tailwind CSS
--   Axios
--   Context API
+- React.js
+- React Router
+- Tailwind CSS
+- Axios
+- Context API
 
 ## Backend
 
--   Node.js
--   Express.js
+- Node.js
+- Express.js
 
 ## Database
 
--   MongoDB + Mongoose
+- MongoDB + Mongoose
 
 ## Authentication
 
--   JWT
--   bcrypt
+- JWT
+- bcrypt
 
 ## Storage
 
--   Cloudinary (Images)
--   Multer
+- Cloudinary (Images)
+- Multer
 
 ## Deployment
 
--   Vercel
--   Render/Railway
--   MongoDB Atlas
+- Vercel
+- Render/Railway
+- MongoDB Atlas
 
-------------------------------------------------------------------------
+---
 
 # Features
 
 ## Authentication
 
--   Register
--   Login
--   Logout
--   Protected Routes
+- Register
+- Login
+- Logout
+- Protected Routes
 
 ## Blogs
 
--   Create Blog
--   Save Draft
--   Publish Blog
--   Edit Blog
--   Delete Blog
+- Create Blog
+- Save Draft
+- Publish Blog
+- Edit Blog
+- Delete Blog
 
 ## Home
 
--   Featured Blogs
--   Latest Blogs
--   Categories
--   Search
+- Featured Blogs
+- Latest Blogs
+- Categories
+- Search
 
 ## Profile
 
--   Update Profile
--   My Blogs
--   Drafts
--   Published Blogs
+- Update Profile
+- My Blogs
+- Drafts
+- Published Blogs
 
-------------------------------------------------------------------------
+---
 
 # Development Roadmap
 
-
 ### Phase 1
 
--   Project setup
--   Folder structure
--   Database design
--   Authentication
+- Project setup
+- Folder structure
+- Database design
+- Authentication
 
 ### Phase 2
 
--   Blog CRUD
+- Blog CRUD
 
 ### Phase 3
 
--   Frontend Integration
+- Frontend Integration
 
 ### Phase 4
 
--   Rich Text Editor
--   Image Upload
--   Voice Notes
+- Rich Text Editor
+- Image Upload
+- Voice Notes
 
 ### Phase 5
 
--   Deployment & Optimization
+- Deployment & Optimization
 
-------------------------------------------------------------------------
+---
 
 # Future Enhancements
 
--   AI Writing Assistant
--   Comments
--   Likes
--   Analytics
--   Notifications
--   Social Sharing
-
+- AI Writing Assistant
+- Comments
+- Likes
+- Analytics
+- Notifications
+- Social Sharing
 
 ## important feature to add -> take feedback
-
