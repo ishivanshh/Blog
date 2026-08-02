@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
+import categoryRoutes from "./routes/category.routes.js";
 import healthCheck from "./controllers/healthCheck.controller.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 
@@ -28,7 +29,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/v1/healthcheck", healthCheck);
-app.use("/api/v1/auth", authRoutes); // app,use is middleware ")
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/categories", categoryRoutes);
 app.use(errorMiddleware);
 
 export default app;
