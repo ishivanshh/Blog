@@ -27,6 +27,13 @@ const registerUser = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+
   res.status(201).json(
     new ApiResponse(
       201,
@@ -65,6 +72,13 @@ const loginUser = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+
   res.status(200).json(
     new ApiResponse(200, { user: loggedInUser, accessToken }, "User logged in successfully")
   );
@@ -80,6 +94,15 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
+const profileUser = asyncHandler(async (req, res) => {
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { user: req.user },
+      "User profile fetched successfully"
+    )
+  );
+});
 
-export { registerUser, loginUser, logoutUser };
-export default { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser, profileUser };
+export default { registerUser, loginUser, logoutUser, profileUser };

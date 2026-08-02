@@ -4,7 +4,16 @@ import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "") || req.cookies?.accessToken;
+  const authHeader = req.header("Authorization");
+  let token = null;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    token = authHeader.replace("Bearer ", "").trim();
+  } else if (authHeader) {
+    token = authHeader.trim();
+  } else {
+    token = req.cookies?.accessToken;
+  }
 
   if (!token) {
     throw new ApiError(401, "Unauthorized request");
