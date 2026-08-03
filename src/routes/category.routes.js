@@ -9,6 +9,6 @@ router.route("/")
 
 router.route("/:id")
   .get(getCategoryById)
-  .put(updateCategory);
+  .patch(updateCategory);
 
 export default router;
