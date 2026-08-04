@@ -13,8 +13,9 @@ const createBlog = asyncHandler(async (req, res) => {
     category,
     tags = [],
     coverImage,
-    status = "Draft",
+    status,
     visibility = "Public",
+    publish = false,
   } = req.body;
 
   if (!title || typeof title !== "string" || title.trim() === "") {
@@ -45,6 +46,7 @@ const createBlog = asyncHandler(async (req, res) => {
 
   const slugBase = title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const slug = `${slugBase}-${Date.now()}`;
+  const finalStatus = publish ? "Published" : status || "Draft";
 
   const blog = await Blog.create({
     title: title.trim(),
@@ -55,7 +57,7 @@ const createBlog = asyncHandler(async (req, res) => {
     author: req.user._id,
     category,
     tags: Array.isArray(tags) ? tags.map((tag) => tag.trim()).filter(Boolean) : [],
-    status,
+    status: finalStatus,
     visibility,
     excerpt: content.trim().slice(0, 160) || null,
   });
@@ -74,6 +76,7 @@ const updateBlog = asyncHandler(async (req, res) => {
     coverImage,
     status,
     visibility,
+    publish = false,
   } = req.body;
 
   if (!id) {
@@ -124,7 +127,11 @@ const updateBlog = asyncHandler(async (req, res) => {
   }
 
   if (coverImage !== undefined) blog.coverImage = coverImage || null;
-  if (status !== undefined) blog.status = status;
+  if (status !== undefined) {
+    blog.status = publish ? "Published" : status;
+  } else if (publish) {
+    blog.status = "Published";
+  }
   if (visibility !== undefined) blog.visibility = visibility;
 
   const updatedBlog = await blog.save();
@@ -132,5 +139,102 @@ const updateBlog = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, updatedBlog, "Blog updated successfully"));
 });
 
-export { createBlog, updateBlog };
-export default { createBlog, updateBlog };
+const deleteBlog = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    throw new ApiError(400, "Blog ID is required");
+  }
+
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    throw new ApiError(404, "Blog not found");
+  }
+
+  if (!req.user?._id) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  if (blog.author.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to delete this blog");
+  }
+
+  await Blog.findByIdAndDelete(id);
+
+  return res.status(200).json(new ApiResponse(200, {}, "Blog deleted successfully"));
+});
+
+const getBlogById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    throw new ApiError(400, "Blog ID is required");
+  }
+
+  const blog = await Blog.findById(id).populate("author", "fullName username email").populate("category", "name slug");
+
+  if (!blog) {
+    throw new ApiError(404, "Blog not found");
+  }
+
+  return res.status(200).json(new ApiResponse(200, blog, "Blog fetched successfully"));
+});
+
+const getAllBlogs = asyncHandler(async (req, res) => {
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    category,
+    sortBy = "createdAt",
+    order = "desc",
+  } = req.query;
+
+  const parsedPage = Math.max(1, Number(page) || 1);
+  const parsedLimit = Math.max(1, Math.min(50, Number(limit) || 10));
+  const skip = (parsedPage - 1) * parsedLimit;
+
+  const query = {};
+
+  if (search && typeof search === "string" && search.trim()) {
+    const searchTerm = search.trim();
+    query.$or = [
+      { title: { $regex: searchTerm, $options: "i" } },
+      { content: { $regex: searchTerm, $options: "i" } },
+      { subtitle: { $regex: searchTerm, $options: "i" } },
+    ];
+  }
+
+  if (category) {
+    query.category = category;
+  }
+
+  const sortOrder = order === "asc" ? 1 : -1;
+  const sortOptions = {};
+  sortOptions[sortBy] = sortOrder;
+
+  const [blogs, totalBlogs] = await Promise.all([
+    Blog.find(query)
+      .populate("author", "fullName username email")
+      .populate("category", "name slug")
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parsedLimit),
+    Blog.countDocuments(query),
+  ]);
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      blogs,
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        totalBlogs,
+        totalPages: Math.ceil(totalBlogs / parsedLimit),
+      },
+    }, "Blogs fetched successfully")
+  );
+});
+
+export { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs };
+export default { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs };
