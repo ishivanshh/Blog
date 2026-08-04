@@ -138,4 +138,4 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
 });
 
-export { updateUserProfile };
+export default { updateUserProfile , getUserProfile };

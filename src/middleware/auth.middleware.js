@@ -30,4 +30,5 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
   return next();
 });
 
+
 export default verifyJWT;
