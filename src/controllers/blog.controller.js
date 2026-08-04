@@ -16,7 +16,9 @@ const createBlog = asyncHandler(async (req, res) => {
     status,
     visibility = "Public",
     publish = false,
-  } = req.body;
+  } = req.body ?? {};
+
+  console.log("Body:", req.body);
 
   if (!title || typeof title !== "string" || title.trim() === "") {
     throw new ApiError(400, "Title is required");
@@ -77,7 +79,7 @@ const updateBlog = asyncHandler(async (req, res) => {
     status,
     visibility,
     publish = false,
-  } = req.body;
+  } = req.body ?? {};
 
   if (!id) {
     throw new ApiError(400, "Blog ID is required");

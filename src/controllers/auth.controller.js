@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { fullName, username, email, password } = req.body;
+  const { fullName, username, email, password } = req.body ?? {};
 
   if ([fullName, username, email, password].some((field) => typeof field === "string" && field.trim() === "")) {
     throw new ApiError(400, "All fields are required");
@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password } = req.body ?? {};
   const identifier = username || email;
 
   if (!identifier || !password) {

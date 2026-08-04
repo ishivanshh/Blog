@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
 const createCategory = asyncHandler(async (req, res) => {
-  const { name, description = "", icon = "", color = "#000000" } = req.body;
+  const { name, description = "", icon = "", color = "#000000" } = req.body ?? {};
 
   if (!name || typeof name !== "string" || name.trim() === "") {
     throw new ApiError(400, "Category name is required");
@@ -86,7 +86,7 @@ const getCategoryById = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, icon, color } = req.body;
+  const { name, description, icon, color } = req.body ?? {};
 
   if (!id) {
     throw new ApiError(400, "Category ID is required");
