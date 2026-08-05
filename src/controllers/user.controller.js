@@ -3,6 +3,7 @@ import Blog from "../models/blog.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
+import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).select("-password");
@@ -57,8 +58,19 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.bio = bio;
   }
 
-  if (profilePicture !== undefined) {
-    user.profilePicture = profilePicture;
+  const profilePictureFile = req.file;
+  let profilePictureUrl = profilePicture;
+
+  if (profilePictureFile) {
+    profilePictureUrl = await uploadOnCloudinary(profilePictureFile, {
+      folder: "blog-app/profile-pictures",
+      public_id: `user_${user._id}`,
+      overwrite: true,
+    });
+  }
+
+  if (profilePictureUrl !== undefined) {
+    user.profilePicture = profilePictureUrl;
   }
 
   await user.save();

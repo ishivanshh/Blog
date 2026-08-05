@@ -4,8 +4,11 @@ import User from "../models/user.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
+import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 
 const createBlog = asyncHandler(async (req, res) => {
+//   console.log("Body:", req.body);
+// console.log("File:", req.file);
   const {
     title,
     subtitle,
@@ -18,7 +21,9 @@ const createBlog = asyncHandler(async (req, res) => {
     publish = false,
   } = req.body ?? {};
 
-  console.log("Body:", req.body);
+  
+
+  const coverImageFile = req.file;
 
   if (!title || typeof title !== "string" || title.trim() === "") {
     throw new ApiError(400, "Title is required");
@@ -50,11 +55,20 @@ const createBlog = asyncHandler(async (req, res) => {
   const slug = `${slugBase}-${Date.now()}`;
   const finalStatus = publish ? "Published" : status || "Draft";
 
+  let coverImageUrl = coverImage;
+  if (coverImageFile) {
+    coverImageUrl = await uploadOnCloudinary(coverImageFile, {
+      folder: "blog-app/cover-images",
+      public_id: `blog_${slug}`,
+      overwrite: true,
+    });
+  }
+
   const blog = await Blog.create({
     title: title.trim(),
     subtitle: subtitle?.trim() || null,
     slug,
-    coverImage: coverImage || null,
+    coverImage: coverImageUrl || null,
     content: content.trim(),
     author: req.user._id,
     category,
@@ -63,6 +77,8 @@ const createBlog = asyncHandler(async (req, res) => {
     visibility,
     excerpt: content.trim().slice(0, 160) || null,
   });
+
+  console.log("Blog created:", blog);
 
   return res.status(201).json(new ApiResponse(201, blog, "Blog created successfully"));
 });
@@ -80,6 +96,8 @@ const updateBlog = asyncHandler(async (req, res) => {
     visibility,
     publish = false,
   } = req.body ?? {};
+
+  const coverImageFile = req.file;
 
   if (!id) {
     throw new ApiError(400, "Blog ID is required");
@@ -128,7 +146,16 @@ const updateBlog = asyncHandler(async (req, res) => {
     blog.tags = Array.isArray(tags) ? tags.map((tag) => tag.trim()).filter(Boolean) : [];
   }
 
-  if (coverImage !== undefined) blog.coverImage = coverImage || null;
+  if (coverImageFile) {
+    blog.coverImage = await uploadOnCloudinary(coverImageFile, {
+      folder: "blog-app/cover-images",
+      public_id: `blog_${blog._id}`,
+      overwrite: true,
+    });
+  } else if (coverImage !== undefined) {
+    blog.coverImage = coverImage || null;
+  }
+
   if (status !== undefined) {
     blog.status = publish ? "Published" : status;
   } else if (publish) {
