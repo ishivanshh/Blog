@@ -28,8 +28,8 @@ export default function Navbar() {
         {/* Nav links */}
         <div className="flex items-center gap-0.5 px-1.5">
           <Link
-            href="/Home"
-            className="text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
+            to="/"
+            className="text-sm font-medium text-neutral-400 hover:text-white bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
           >
             Home
           </Link>
@@ -92,7 +92,7 @@ export default function Navbar() {
         {/* Right group */}
         <div className="flex items-center gap-0.5 pr-0.5">
           <Link
-            href="/Blog"
+            to="/Blog"
             className="text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
           >
             Write

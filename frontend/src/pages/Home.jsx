@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, ArrowLeft, Search } from "lucide-react";
-
+import { Link } from "react-router-dom";
 /* ---------------- Dummy data ---------------- */
 
 const CARD_BLOGS = [
@@ -177,14 +177,15 @@ export default function Home() {
       {/* Hero */}
       <section className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
         <h1 className="text-black text-5xl md:text-7xl font-bold mb-10">
-          Hey,
+          Hey, Shivansh
         </h1>
-        <button
+        <Link
           type="button"
+          to="/Blog"
           className="bg-black text-white font-semibold text-sm rounded-full px-8 py-4 hover:bg-neutral-200 transition-colors"
         >
           Write
-        </button>
+        </Link>
       </section>
 
       {/* Blog cards */}
@@ -204,7 +205,7 @@ export default function Home() {
 
         
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {CARD_BLOGS.map((blog) => (
             <BlogCard key={blog.title} blog={blog} />
           ))}
@@ -213,7 +214,7 @@ export default function Home() {
 
       {/* Slider */}
       <section className="max-w-6xl mx-auto px-4 pb-20">
-        <h2 className="text-3xl font-bold text-neutral-900 mb-10">
+        <h2 className="text-3xl font-bold uppercase text-neutral-900 mb-10 text-center">
           Featured on Yourspace
         </h2>
         <Slider />
@@ -222,7 +223,7 @@ export default function Home() {
       {/* Email signup */}
       <section className="bg-white">
         <div className="max-w-3xl mx-auto px-4 py-24 text-center">
-          <h2 className="text-black text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-black text-3xl md:text-3xl font-bold mb-4 uppercase">
             Get the latest updates
           </h2>
           <p className="text-black text-sm mb-10">
