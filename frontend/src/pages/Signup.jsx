@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import {Link } from "react-router-dom";
+
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +18,11 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex font-sans">
       {/* Left panel — illustration side (use public/signup.png) */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center p-12 bg-black">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center p-12 bg-white">
         <img
           src="/signup.png"
           alt="Signup illustration"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-fit"
         />
         {/* <div className="absolute z-10  max-w-sm text-black">
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-8">
@@ -39,14 +41,14 @@ export default function Signup() {
         <div className="w-full max-w-sm">
           <div className="flex items-center gap-2.5 mb-10">
             <div className="w-9 h-9 rounded-full bg-neutral-900 flex items-center justify-center font-bold text-sm text-white flex-shrink-0">
-              Y
+              N
             </div>
-            <span className="text-neutral-900 font-semibold text-2xl">
+            <span className="text-neutral-900 font-semibold text-3xl">
               Yourspace
             </span>
           </div>
 
-          <h1 className="text-4xl font-bold text-neutral-900 mb-8">
+          <h1 className="text-3xl font-bold text-neutral-900 mb-8">
             Create account
           </h1>
 
@@ -137,9 +139,9 @@ export default function Signup() {
 
           <p className="text-center text-sm text-neutral-600 mt-8">
             Have an account?{" "}
-            <a href="#" className="text-neutral-900 font-semibold">
+            <Link to="/login" className="text-neutral-900 font-semibold">
               Log in
-            </a>
+            </Link>
           </p>
         </div>
       </div>
