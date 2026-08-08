@@ -177,7 +177,7 @@ export default function Dashboard() {
       {/* Hero */}
       <section className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
         <h1 className="text-black text-5xl md:text-7xl font-bold mb-10">
-          Hey, Rose
+          Hey, Shivansh
         </h1>
         <Link
           type="button"

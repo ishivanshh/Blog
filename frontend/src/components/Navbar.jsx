@@ -92,7 +92,7 @@ export default function Navbar() {
         {/* Right group */}
         <div className="flex items-center gap-0.5 pr-0.5">
           <Link
-            to="/Blog"
+            to="/WriteBlog"
             className="text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
           >
             Write
