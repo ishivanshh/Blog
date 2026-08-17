@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Search, ArrowLeft, ArrowRight, Globe, Share2 } from "lucide-react";
+import { Search, ArrowLeft, ArrowRight, Globe, Share2} from "lucide-react";
 import BlogCard from "../components/BlogCard";
+import { Link } from 'react-router-dom';
 
 const featuredArticle = {
   category: "FEATURED STORY",
@@ -18,8 +19,8 @@ const featuredArticle = {
 const articles = [
   {
     category: "TECHNOLOGY",
-    date: "Oct 24",
-    title: "The Algorithm's Invisible Hand on Modern Art",
+    date: "Aug 26",
+    title: "The Art of Working of Instagram Algorithm",
     excerpt:
       "Examining how machine learning is not just assisting creators, but fundamentally altering the aesthetic DNA of...",
     author: "Julian Thorne",
@@ -27,8 +28,8 @@ const articles = [
       "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=800&q=80",
   },
   {
-    category: "CULTURE",
-    date: "Oct 22",
+    category: "FASHION",
+    date: "Jun 22",
     title: "Urban Solitude and the Death of the Third Place",
     excerpt:
       "A deep dive into the sociological shift of city living and the disappearing physical hubs of communal interaction in major...",
@@ -61,18 +62,18 @@ export default function YourSpaceHomepage() {
               YOURSPACE
             </span>
             <nav className="flex items-center gap-6 font-sans text-sm">
-              <a
-                href="#"
+              <Link
+                to="/home"
                 className="text-violet-500 border-b-2 border-violet-500 pb-1 font-medium"
               >
                 Explore
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/writeblog"
                 className="text-neutral-700 hover:text-neutral-900 pb-1"
               >
                 Write
-              </a>
+              </Link>
             </nav>
           </div>
 

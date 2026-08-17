@@ -17,10 +17,6 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: "/writeblog",
-        element: <WriteBlog />,
-      },
-      {
     path: "/dashboard",
     element: <Dashboard />,
   }      
@@ -29,7 +25,12 @@ const router = createBrowserRouter([
   // routing withoud layout
   {
         index: true,
+        path : "/home",
         element: <Home />,
+  },
+  {
+        path: "/writeblog",
+        element: <WriteBlog />,
   },
   {
     path: "/login",
