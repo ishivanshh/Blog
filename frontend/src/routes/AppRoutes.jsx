@@ -11,6 +11,8 @@ import Signup from "../pages/Signup";
 import Profile from "../pages/Profile";
 import MyBlogs from "../pages/MyBlog";
 import EditBlog from "../pages/EditBlog";
+import NotFound from "../pages/NotFound";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,6 +45,10 @@ const router = createBrowserRouter([
   {
     path : "/profile",
     element : <Profile/>
+  },
+  {
+    path : "*",
+    element : <NotFound/>
   },
   {
     path : "/myblog",
