@@ -1,288 +1,317 @@
-import React, { useState } from "react";
-import { Search, ArrowLeft, ArrowRight, Globe, Share2} from "lucide-react";
-import BlogCard from "../components/BlogCard";
-import { Link } from 'react-router-dom';
+import React from "react";
 
-const featuredArticle = {
-  category: "FEATURED STORY",
-  date: "Oct 24",
-  title: "The Quiet Revolution of Digital Stillness",
-  excerpt:
-    "How a new generation of architects is designing spaces specifically to shield the human mind from the persistent noise of the algorithmic age.",
-  author: "Shivansh Saxena",
-  image:
-    "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=80",
-  readTime: "8 Min Read",
-  role: "Full Stack Developer",
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  faint: "#eeeeec",
+  card: "#dcdcda",
+  hairline: "#d6d6d3",
+  accent: "#e3ff4f",
 };
 
-const articles = [
-  {
-    category: "TECHNOLOGY",
-    date: "Aug 26",
-    title: "The Art of Working of Instagram Algorithm",
-    excerpt:
-      "Examining how machine learning is not just assisting creators, but fundamentally altering the aesthetic DNA of...",
-    author: "Julian Thorne",
-    image:
-      "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=800&q=80",
-  },
-  {
-    category: "FASHION",
-    date: "Jun 22",
-    title: "Urban Solitude and the Death of the Third Place",
-    excerpt:
-      "A deep dive into the sociological shift of city living and the disappearing physical hubs of communal interaction in major...",
-    author: "Sarah Jenkins",
-    image:
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80",
-  },
-  {
-    category: "SUSTAINABILITY",
-    date: "Oct 18",
-    title: "Material Truths: The Future of Responsible Luxury",
-    excerpt:
-      "Why the world's most exclusive fashion houses are finally turning towards hyper-local, regenerative bio-fabrics.",
-    author: "Marcus Wei",
-    image:
-      "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80",
-  },
-];
+const fonts = {
+  display: "'Fraunces', serif",
+  mono: "'Space Mono', monospace",
+};
 
-export default function YourSpaceHomepage() {
-  const [selectedArticle, setSelectedArticle] = useState(null);
-
+function Wordmark() {
   return (
-    <div className="min-h-screen bg-white text-neutral-900 font-serif">
-      {/* Header */}
-      <header className="border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-          <div className="flex items-center gap-10">
-            <span className="text-xl font-bold tracking-tight font-serif">
-              YOURSPACE
-            </span>
-            <nav className="flex items-center gap-6 font-sans text-sm">
-              <Link
-                to="/home"
-                className="text-violet-500 border-b-2 border-violet-500 pb-1 font-medium"
-              >
-                Explore
-              </Link>
-              <Link
-                to="/writeblog"
-                className="text-neutral-700 hover:text-neutral-900 pb-1"
-              >
-                Write
-              </Link>
-            </nav>
-          </div>
+    <div
+      aria-hidden
+      className="absolute top-0 right-0 overflow-hidden pointer-events-none select-none"
+      style={{ zIndex: 0, width: "60%", height: "70vh" }}
+    >
+      <span
+        style={{
+          fontFamily: fonts.display,
+          fontWeight: 600,
+          fontSize: "min(30vw, 340px)",
+          color: colors.ink,
+          opacity: 0.035,
+          writingMode: "vertical-rl",
+          whiteSpace: "nowrap",
+          lineHeight: 1,
+          position: "absolute",
+          right: 40,
+          top: -40,
+        }}
+      >
+        YOURSPACE
+      </span>
+    </div>
+  );
+}
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 bg-neutral-100 rounded-full px-4 py-2 w-64">
-              <Search className="w-4 h-4 text-neutral-400" />
-              <input
-                type="text"
-                placeholder="Search stories..."
-                className="bg-transparent outline-none text-sm font-sans placeholder:text-neutral-400 w-full"
-              />
-            </div>
-            <button className="font-sans text-sm text-neutral-800 hover:text-neutral-900">
-              Login
-            </button>
-            <button className="font-sans text-sm bg-violet-400 hover:bg-violet-500 transition-colors text-white rounded-full px-5 py-2">
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-6">
-        {/* Hero */}
-        <section className="mt-10">
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => setSelectedArticle(featuredArticle)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setSelectedArticle(featuredArticle);
-              }
-            }}
-            className="relative rounded-2xl overflow-hidden min-h-[380px] flex flex-col justify-between p-10 bg-neutral-900 bg-cover bg-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2"
+function Nav() {
+  return (
+    <header
+      className="relative z-10 flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5 md:py-6"
+      style={{ borderBottom: `1px solid ${colors.hairline}` }}
+    >
+      <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
+        YOURSPACE
+      </span>
+      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
+        {["HOME", "EXPLORE", "CATEGORIES"].map((item, i) => (
+          <a
+            key={item}
+            href="#"
             style={{
-              backgroundImage:
-                "linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.55) 45%, rgba(20,20,25,0.15) 100%), url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=80')",
+              fontFamily: fonts.mono,
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              color: i === 0 ? colors.ink : colors.muted,
+              borderBottom: i === 0 ? `1px solid ${colors.ink}` : "none",
+              paddingBottom: 2,
             }}
           >
-            <div className="flex items-center gap-3">
-              <span className="font-sans text-xs font-semibold tracking-wide bg-violet-200/80 text-violet-900 rounded-full px-4 py-1.5">
-                FEATURED STORY
-              </span>
-              <span className="font-sans text-xs text-neutral-500">
-                8 Min Read
-              </span>
-            </div>
+            {item}
+          </a>
+        ))}
+      </nav>
+      <div className="flex items-center gap-3 sm:gap-6 order-2 md:order-3">
+        <a href="#" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
+          LOGIN
+        </a>
+        <a
+          href="#"
+          className="px-4 sm:px-5 py-2"
+          style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", fontWeight: 700, backgroundColor: colors.accent, color: colors.ink }}
+        >
+          SIGNUP
+        </a>
+      </div>
+    </header>
+  );
+}
 
-            <div className="max-w-xl">
-              <h1 className="text-5xl leading-[1.05] font-medium mb-5">
-                The Quiet Revolution of Digital Stillness
-              </h1>
-              <p className="font-sans italic text-neutral-700 text-base leading-relaxed mb-6">
-                How a new generation of architects is designing spaces
-                specifically to shield the human mind from the persistent
-                noise of the algorithmic age.
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-neutral-900" />
-                <div className="font-sans text-sm leading-tight">
-                  <div className="font-semibold text-neutral-900">
-                    By Shivansh Saxena
-                  </div>
-                  <div className="text-neutral-500 text-xs">
-                    Full Stack Developer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+function Hero() {
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 pt-14 sm:pt-20 pb-16 max-w-3xl">
+      <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", color: colors.muted }}>
+        VOL. 04 — EDITORIAL PLATFORM
+      </span>
+      <h1
+        className="mt-5 mb-6"
+        style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: "clamp(44px, 7vw, 92px)", lineHeight: 0.98, letterSpacing: "-0.02em" }}
+      >
+        Write.
+        <br />
+        Publish. Share.
+      </h1>
+      <p style={{ fontFamily: fonts.display, fontSize: 19, lineHeight: 1.6, color: colors.muted, maxWidth: 480 }}>
+        A minimalist space for deep thinkers, storytellers, and avid readers to connect through the written word.
+      </p>
+      <div className="flex items-center gap-4 mt-10">
+        <a
+          href="#"
+          className="flex items-center gap-3 px-7 py-3.5 hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: colors.accent, color: colors.ink }}
+        >
+          <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>START WRITING</span>
+          <span style={{ fontFamily: fonts.mono, fontSize: 14 }}>→</span>
+        </a>
+        <a
+          href="#"
+          className="px-7 py-3.5 border hover:bg-black hover:text-white transition-colors"
+          style={{ borderColor: colors.hairline, color: colors.ink }}
+        >
+          <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>EXPLORE BLOGS</span>
+        </a>
+      </div>
+    </section>
+  );
+}
 
-        {/* Latest Thoughts */}
-        <section className="mt-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-medium">Latest Thoughts</h2>
-            <div className="flex items-center gap-3">
-              <button className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-              <button className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors">
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+function CategoryStrip() {
+  const topics = ["ALL", "TECHNOLOGY", "AI & ML", "WEB DEV", "DESIGN", "PRODUCTIVITY"];
+  return (
+    <section
+      className="relative z-10 flex gap-6 sm:gap-8 px-5 sm:px-8 md:px-14 py-4 overflow-x-auto"
+      style={{ borderTop: `1px solid ${colors.hairline}`, borderBottom: `1px solid ${colors.hairline}` }}
+    >
+      {topics.map((t, i) => (
+        <span
+          key={t}
+          className="shrink-0"
+          style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: i === 0 ? colors.ink : colors.muted, fontWeight: i === 0 ? 700 : 400 }}
+        >
+          {t}
+        </span>
+      ))}
+    </section>
+  );
+}
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {articles.map((article) => (
-              <article
-                key={article.title}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedArticle(article)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedArticle(article);
-                  }
-                }}
-                className="flex flex-col cursor-pointer rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-4"
-              >
-                <div
-                  className="w-full aspect-square rounded-xl bg-cover bg-center mb-4"
-                  style={{ backgroundImage: `url('${article.image}')` }}
-                />
-                <div className="flex items-center justify-between font-sans text-xs mb-3">
-                  <span className="font-semibold tracking-wide text-amber-600">
-                    {article.category}
-                  </span>
-                  <span className="text-neutral-400">{article.date}</span>
-                </div>
-                <h3 className="text-xl font-medium leading-snug mb-3">
-                  {article.title}
-                </h3>
-                <p className="font-sans text-sm text-neutral-500 leading-relaxed mb-5">
-                  {article.excerpt}
-                </p>
-                <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-neutral-900" />
-                  <span className="font-sans text-sm text-neutral-700">
-                    {article.author}
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* Newsletter */}
-        <section className="mt-16 mb-20">
-          <div className="bg-neutral-100 rounded-2xl px-10 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-            <div className="max-w-sm">
-              <h3 className="text-3xl font-medium mb-3">
-                Deep thoughts, delivered weekly.
-              </h3>
-              <p className="font-sans text-sm text-neutral-500 leading-relaxed">
-                Join 50,000+ thinkers who receive our curated Saturday
-                briefing on the intersection of design, technology, and
-                philosophy.
-              </p>
+function FeaturedPost() {
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="lg:col-span-7 h-[240px] sm:h-[340px] lg:h-[440px] overflow-hidden">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7j2qiepaKDqRRZIuDgLwFgJX5ZCI-ITo0lkp1zyQFjwpIKVnfvROTxEH2WaAsQYg_3qhYOUf7U18tHQGJzdV8rQOJHiyfDivYr0tGc9CFORqnANb6Kj3Z5vpKRtgNyPdRH46k5ytO7yXK8JTqPOHlcTCjh9s-WzdDI4t4O1sqzhgnE2XV24AY1kTr2Ah7LeSe79EEnrtpncekPdY9dWYthBzF1LId65-U-unxdDWUQeNe_KxUMJi4"
+            alt="Featured post"
+            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.12em", color: colors.muted }}>
+            TECHNOLOGY — 5 MIN READ
+          </span>
+          <h2
+            className="mt-4 mb-5"
+            style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 34, lineHeight: 1.12, color: colors.ink }}
+          >
+            The Future of Generative Interfaces in Editorial Design
+          </h2>
+          <p style={{ fontFamily: fonts.display, fontSize: 16, lineHeight: 1.6, color: colors.muted }}>
+            Exploring how AI-driven layouts are reshaping the way we consume long-form content on the web.
+          </p>
+          <div className="flex items-center gap-3 mt-7">
+            <div className="w-9 h-9 overflow-hidden rounded-full" style={{ backgroundColor: colors.faint }}>
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4lk6ijnFk_WHrqQqiS7_7yuFDjUB-xTx9PS2nvpGMhDRIsEOSspKJXnjFBW2es2quQ-Ecbwbl02Q8Ba8rWesikeUktusUR6pb-0fyM1BCIQO-SjZwoEcSY4XVmHk7Jh9RizkbKtnzYlRRdz8FvcfV0j1iUa_b829PVyAD-yfnu2HJAHleIVEanxJn7oG07A5DXw_wJXpBAbZZAIhgvcRhwDHxB3C0T_LpQvBfiiZzIFq7xo7qWAag"
+                alt="Sarah Jenkins"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="w-full md:w-auto">
-              <div className="flex gap-3">
-                <input
-                  type="email"
-                  placeholder="email@address.com"
-                  className="font-sans text-sm bg-white rounded-lg px-4 py-3 outline-none border border-transparent focus:border-violet-300 w-64"
-                />
-                <button className="font-sans text-sm font-medium bg-violet-400 hover:bg-violet-500 transition-colors text-white rounded-lg px-6 py-3 whitespace-nowrap">
-                  Subscribe
-                </button>
-              </div>
-              <p className="font-sans text-xs text-neutral-400 mt-2">
-                No spam. Ever. Unsubscribe anytime.
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-neutral-200">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between">
-          <div>
-            <span className="text-lg font-bold tracking-tight">
-              YOURSPACE
+            <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.06em", color: colors.ink }}>
+              SARAH JENKINS
             </span>
-            <p className="font-sans text-xs text-neutral-400 mt-1">
-              © 2026 YOURSPACE Editorial. All rights reserved.
-            </p>
-            <p className="font-sans text-xs text-neutral-400 mt-1">
-              Design By Shivansh
-              </p>
-          </div>
-
-          <nav className="hidden sm:flex items-center gap-6 font-sans text-sm text-neutral-600">
-            <a href="#" className="hover:text-neutral-900">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              Terms
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              About
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              Contact
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <button className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors">
-              <Globe className="w-4 h-4" />
-            </button>
-            <button className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors">
-              <Share2 className="w-4 h-4" />
-            </button>
           </div>
         </div>
-      </footer>
+      </div>
+    </section>
+  );
+}
 
-      {selectedArticle && (
-        <BlogCard
-          article={selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-        />
-      )}
+function PostCard({ image, category, title, excerpt, author, readTime, index }) {
+  return (
+    <article className="group">
+      <div className="h-52 overflow-hidden mb-5" style={!image ? { backgroundColor: colors.faint, display: "flex", alignItems: "center", justifyContent: "center" } : undefined}>
+        {image ? (
+          <img src={image} alt={title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+        ) : (
+          <span style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted, letterSpacing: "0.1em" }}>NO IMAGE</span>
+        )}
+      </div>
+      <div className="flex items-center gap-3 mb-3">
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.05em", color: colors.muted }}>
+          {String(index).padStart(2, "0")}
+        </span>
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.1em", color: colors.muted }}>
+          {category.toUpperCase()}
+        </span>
+      </div>
+      <h4
+        className="mb-3 group-hover:opacity-70 transition-opacity"
+        style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 21, lineHeight: 1.25, color: colors.ink }}
+      >
+        {title}
+      </h4>
+      <p className="mb-5" style={{ fontFamily: fonts.display, fontSize: 15, lineHeight: 1.6, color: colors.muted }}>
+        {excerpt}
+      </p>
+      <div className="flex items-center justify-between pt-4" style={{ borderTop: `1px solid ${colors.hairline}` }}>
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.05em", color: colors.muted }}>{author.toUpperCase()}</span>
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.05em", color: colors.muted }}>{readTime}</span>
+      </div>
+    </article>
+  );
+}
+
+function LatestWritings() {
+  const posts = [
+    {
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBit4PQzXK5SjF-Bn6md18fEidpL7hJye3pUybuQCFsiCWYd3o8lEy1zsmIOCDS6_4L66YjCN9IkrK6HCRFKFIuAhxy_-2xXdJiIVF936VxFTRmslkxpKyBDaUCo1SNHAnbCyEWmSihT-TSTDgyEvBQHCR9eJKjNPm-zqPPxSAYLop2DlXSUH23z3kXBtXasRiaKn3lLaptP-OIEgMNw9egibVbO9yfqfQ5bbTTjYvY8RMqNvvLc1Di",
+      category: "Productivity",
+      title: "Finding Focus in a World of Noise",
+      excerpt: "Practical strategies for deep work and eliminating digital distractions.",
+      author: "David Chen",
+      readTime: "3 MIN",
+    },
+    {
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuCb9bixrZ-il6igmMG5YTVnkKPVLoy4fLxWcnrR90fkpQpof6yk-IywEUItOWIEzW4blL8ctGLGHHzIBv_pZkg64XBcOP_8Uj7y59C5Eqg1Lnqk9KzH6x_R6wQAKr2wejyEomMDF44Sa3Dojur2bsCa2PEqoOvHqnltlqkvDxIVsc0aGgTX9efS7_W4xbyj3ofAG3YOG6dGapsgD3t6FmGAWSPu4_5-ytfBYNFKs71JulMIlDDHBhfo",
+      category: "Web Development",
+      title: "The Elegance of Vanilla CSS",
+      excerpt: "Why returning to the basics of cascading style sheets leads to cleaner code.",
+      author: "Elena Rostova",
+      readTime: "7 MIN",
+    },
+    {
+      image: null,
+      category: "AI & ML",
+      title: "Demystifying Large Language Models",
+      excerpt: "A plain-English explanation of how modern AI text generation works under the hood.",
+      author: "Marcus Thorne",
+      readTime: "12 MIN",
+    },
+  ];
+
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16" style={{ borderTop: `1px solid ${colors.hairline}` }}>
+      <div className="flex flex-wrap items-end justify-between gap-y-3 mb-10 sm:mb-12">
+        <h3 style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 30, color: colors.ink }}>
+          Latest Writings
+        </h3>
+        <a href="#" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
+          VIEW ALL →
+        </a>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {posts.map((p, i) => (
+          <PostCard key={p.title} {...p} index={i + 1} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  const links = ["ABOUT", "PRIVACY", "TERMS", "CONTACT", "NEWSLETTER"];
+  return (
+    <footer className="relative z-10 px-5 sm:px-8 md:px-14 py-10" style={{ borderTop: `1px solid ${colors.hairline}` }}>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.12em", color: colors.ink, fontWeight: 700 }}>
+          YOURSPACE
+        </span>
+        <nav className="flex flex-wrap justify-center gap-6">
+          {links.map((l) => (
+            <a key={l} href="#" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.1em", color: colors.muted }}>
+              {l}
+            </a>
+          ))}
+        </nav>
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.06em", color: colors.muted }}>
+          © 2026 YOURSPACE
+        </span>
+      </div>
+    </footer>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="min-h-screen relative overflow-hidden antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
+      <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet"
+      />
+
+      <Wordmark />
+
+      <div className="relative z-10">
+        <Nav />
+        <Hero />
+        <CategoryStrip />
+        <FeaturedPost />
+        <LatestWritings />
+        <Footer />
+      </div>
     </div>
   );
 }

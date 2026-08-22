@@ -1,113 +1,92 @@
-import { useState, useRef } from "react";
-import { ChevronDown } from "lucide-react";
-import {Link} from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
-const CATEGORIES = ["Politics", "Fashion", "Technology", "Design", "Sports"];
+// Same tokens as the rest of the Awwwards-themed YOURSPACE pages
+// (Home / Login / Signup / NotFound / Write). Keep in sync if the
+// palette or type scale changes.
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  hairline: "#d6d6d3",
+  accent: "#e3ff4f",
+};
 
-export default function Navbar() {
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const closeTimer = useRef(null);
+const fonts = {
+  mono: "'Space Mono', monospace",
+};
 
-  const openDropdown = () => {
-    clearTimeout(closeTimer.current);
-    setCategoriesOpen(true);
-  };
+const NAV_LINKS = [
+  { label: "HOME", to: "/home" },
+  { label: "EXPLORE", to: "/explore" },
+  { label: "CATEGORIES", to: "/categories" },
+  { label: "WRITE", to: "/write" },
+];
 
-  const closeDropdown = () => {
-    closeTimer.current = setTimeout(() => setCategoriesOpen(false), 120);
-  };
-
+/**
+ * Props:
+ * - active: string — matches a NAV_LINKS "to" value to underline it.
+ * - authed: boolean — if true, shows an avatar instead of Login/Signup.
+ * - avatarUrl: string — background image for the avatar when authed.
+ */
+export default function Navbar({ active = "/home", authed = false, avatarUrl }) {
   return (
-    <div className="w-full flex items-center justify-center bg-black py-6 px-4 font-sans">
-      <nav className="flex items-center gap-1 bg-neutral-900 rounded-full p-1.5 shadow-xl">
-        {/* Logo */}
-        <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center font-bold text-sm text-neutral-900 flex-shrink-0">
-          Y
-        </div>
+    <header
+      className="relative z-10 flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5 md:py-6"
+      style={{ backgroundColor: colors.bg, borderBottom: `1px solid ${colors.hairline}` }}
+    >
+      <Link to="/home" style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
+        YOURSPACE
+      </Link>
 
-        {/* Nav links */}
-        <div className="flex items-center gap-0.5 px-1.5">
-          <Link
-            to="/"
-            className="text-sm font-medium text-neutral-400 hover:text-white bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
-          >
-            Home
-          </Link>
-
-          {/* Categories with dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={openDropdown}
-            onMouseLeave={closeDropdown}
-          >
-            <button
-              type="button"
-              aria-haspopup="true"
-              aria-expanded={categoriesOpen}
-              className={`flex items-center gap-1 text-sm font-medium rounded-full px-4 py-2.5 whitespace-nowrap transition-colors ${
-                categoriesOpen
-                  ? "text-white bg-neutral-800"
-                  : "text-neutral-400 hover:text-white hover:bg-neutral-800"
-              }`}
+      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
+        {NAV_LINKS.map((item) => {
+          const isActive = item.to === active;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              style={{
+                fontFamily: fonts.mono,
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                color: isActive ? colors.ink : colors.muted,
+                borderBottom: isActive ? `2px solid ${colors.accent}` : "none",
+                paddingBottom: 4,
+              }}
+              className="hover:opacity-80 transition-opacity"
             >
-              Categories
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${
-                  categoriesOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            <div
-              className={`absolute top-full left-1/2 -translate-x-1/2 mt-2.5 min-w-[190px] bg-neutral-900 rounded-2xl p-2 shadow-2xl z-20 transition-all duration-150 ${
-                categoriesOpen
-                  ? "opacity-100 visible translate-y-0"
-                  : "opacity-0 invisible -translate-y-1 pointer-events-none"
-              }`}
-            >
-              {CATEGORIES.map((cat) => (
-                <a
-                  key={cat}
-                  href="#"
-                  className="block text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg px-3.5 py-2.5 transition-colors"
-                >
-                  {cat}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <a
-            href="#"
-            className="text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
-          >
-            Search
-          </a>
-        </div>
-
-        {/* Divider */}
-        <div className="w-px h-5.5 bg-white/10 mx-1" />
-
-        {/* Right group */}
-        <div className="flex items-center gap-0.5 pr-0.5">
-          <Link
-            to="/writeblog"
-            className="text-sm font-medium text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full px-4 py-2.5 whitespace-nowrap transition-colors"
-          >
-            Write
-          </Link>
-
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-white text-neutral-900 rounded-full pl-3.5 pr-2 py-1.5 text-sm font-semibold"
-          >
-            <span className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 flex-shrink-0" />
-            Profile
-            <ChevronDown size={14} />
-          </button>
-        </div>
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
-    </div>
+
+      <div className="flex items-center gap-3 sm:gap-6 order-2 md:order-3">
+        {authed ? (
+          <div
+            className="w-9 h-9 rounded-full bg-cover bg-center shrink-0"
+            style={{
+              backgroundImage: avatarUrl ? `url('${avatarUrl}')` : undefined,
+              backgroundColor: colors.ink,
+              border: `1px solid ${colors.hairline}`,
+            }}
+          />
+        ) : (
+          <>
+            <Link to="/login" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }} className="hover:opacity-80 transition-opacity">
+              LOGIN
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 sm:px-5 py-2 hover:opacity-90 transition-opacity"
+              style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", fontWeight: 700, backgroundColor: colors.accent, color: colors.ink }}
+            >
+              SIGNUP
+            </Link>
+          </>
+        )}
+      </div>
+    </header>
   );
 }

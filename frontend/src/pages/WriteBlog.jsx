@@ -11,6 +11,22 @@ import {
   Camera,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
+// Same tokens as HomeAwwwards / LoginAwwwards / SignupAwwwards / NotFoundAwwwards.
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  faint: "#eeeeec",
+  hairline: "#d6d6d3",
+  accent: "#e3ff4f",
+};
+
+const fonts = {
+  display: "'Fraunces', serif",
+  mono: "'Space Mono', monospace",
+};
+
 export default function YourSpaceWritePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -43,74 +59,105 @@ export default function YourSpaceWritePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-neutral-900 font-serif">
+    <div className="min-h-screen antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
+
       {/* Header */}
-      <header className="bg-white border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+      <header className="border-b" style={{ borderColor: colors.hairline, backgroundColor: colors.bg }}>
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5">
           <div className="flex items-center gap-4">
-            <span className="text-xl font-bold tracking-tight font-serif">
+            <span style={{ fontFamily: fonts.mono, fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: colors.ink }}>
               YOURSPACE
             </span>
-            <div className="w-px h-5 bg-neutral-200" />
-            <span className="font-sans text-xs font-semibold tracking-widest text-neutral-400">
+            <div className="w-px h-5" style={{ backgroundColor: colors.hairline }} />
+            <span style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: colors.muted }}>
               DRAFTING
             </span>
           </div>
 
-          <nav className="flex items-center gap-8 font-sans text-sm">
-            <Link to="/home" className="text-neutral-600 hover:text-neutral-900">
-              Explore
+          <nav className="flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
+            <Link
+              to="/home"
+              style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}
+              className="hover:opacity-70 transition-opacity"
+            >
+              EXPLORE
             </Link>
             <a
               href="#"
-              className="text-indigo-600 border-b-2 border-indigo-600 pb-1 font-medium"
+              style={{
+                fontFamily: fonts.mono,
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                fontWeight: 700,
+                color: colors.ink,
+                borderBottom: `2px solid ${colors.accent}`,
+                paddingBottom: 4,
+              }}
             >
-              Write
+              WRITE
             </a>
           </nav>
 
-          <div className="flex items-center gap-5">
-            <button className="text-neutral-400 hover:text-neutral-700 transition-colors">
+          <div className="flex items-center gap-5 order-2 md:order-3">
+            <button style={{ color: colors.muted }} className="hover:opacity-70 transition-opacity">
               <MoreVertical className="w-5 h-5" />
             </button>
             <div
-              className="w-9 h-9 rounded-full bg-cover bg-center bg-neutral-800"
+              className="w-9 h-9 rounded-full bg-cover bg-center shrink-0"
               style={{
                 backgroundImage:
                   "url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80')",
+                backgroundColor: colors.ink,
+                border: `1px solid ${colors.hairline}`,
               }}
             />
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 pt-14 pb-40">
+      <main className="max-w-4xl mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-48">
         {/* Floating toolbar */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-1 bg-white rounded-xl shadow-sm border border-neutral-200 px-3 py-2">
+        <div className="flex justify-center mb-8 overflow-x-auto">
+          <div
+            className="flex items-center gap-1 px-3 py-2 shrink-0"
+            style={{ backgroundColor: "#ffffff", border: `1px solid ${colors.hairline}` }}
+          >
             {toolbarButtons.map(({ icon: Icon, label }) => (
               <button
                 key={label}
                 title={label}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 transition-colors"
+                className="w-8 h-8 flex items-center justify-center transition-colors"
+                style={{ color: colors.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = colors.ink)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = colors.muted)}
               >
                 <Icon className="w-4 h-4" />
               </button>
             ))}
-            <div className="w-px h-5 bg-neutral-200 mx-1" />
+            <div className="w-px h-5 mx-1" style={{ backgroundColor: colors.hairline }} />
             {toolbarButtons2.map(({ icon: Icon, label }) => (
               <button
                 key={label}
                 title={label}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 transition-colors"
+                className="w-8 h-8 flex items-center justify-center transition-colors"
+                style={{ color: colors.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = colors.ink)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = colors.muted)}
               >
                 <Icon className="w-4 h-4" />
               </button>
             ))}
-            <div className="w-px h-5 bg-neutral-200 mx-1" />
+            <div className="w-px h-5 mx-1" style={{ backgroundColor: colors.hairline }} />
             <button
               title="Image"
-              className="w-8 h-8 flex items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 transition-colors"
+              className="w-8 h-8 flex items-center justify-center transition-colors"
+              style={{ color: colors.muted }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = colors.ink)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = colors.muted)}
             >
               <ImageIcon className="w-4 h-4" />
             </button>
@@ -128,18 +175,17 @@ export default function YourSpaceWritePage() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full aspect-[2/1] rounded-2xl border-2 border-dashed border-neutral-300 bg-white/60 hover:bg-white hover:border-neutral-400 transition-colors flex flex-col items-center justify-center gap-3 overflow-hidden"
+          className="w-full aspect-[2/1] border-2 border-dashed transition-colors flex flex-col items-center justify-center gap-3 overflow-hidden"
+          style={{ borderColor: colors.hairline, backgroundColor: colors.faint }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = colors.muted)}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = colors.hairline)}
         >
           {coverPhoto ? (
-            <img
-              src={coverPhoto}
-              alt="Cover"
-              className="w-full h-full object-cover"
-            />
+            <img src={coverPhoto} alt="Cover" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
           ) : (
             <>
-              <Camera className="w-9 h-9 text-neutral-400" strokeWidth={1.5} />
-              <span className="font-sans text-xs font-semibold tracking-widest text-neutral-400">
+              <Camera className="w-9 h-9" style={{ color: colors.muted }} strokeWidth={1.5} />
+              <span style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: colors.muted }}>
                 ADD COVER PHOTO
               </span>
             </>
@@ -148,18 +194,24 @@ export default function YourSpaceWritePage() {
 
         {/* Story details */}
         <div className="mt-10">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="font-sans text-xs font-semibold tracking-widest text-neutral-400">
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <span style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: colors.muted }}>
               STORY DETAILS
             </span>
-            <span className="font-sans text-[11px] font-medium bg-neutral-100 text-neutral-500 rounded-md px-2.5 py-1">
+            <span
+              className="px-2.5 py-1"
+              style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", backgroundColor: colors.faint, color: colors.muted, border: `1px solid ${colors.hairline}` }}
+            >
               DRAFT
             </span>
-            <span className="font-sans text-[11px] font-medium bg-neutral-100 text-neutral-500 rounded-md px-2.5 py-1">
+            <span
+              className="px-2.5 py-1"
+              style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", backgroundColor: colors.faint, color: colors.muted, border: `1px solid ${colors.hairline}` }}
+            >
               {wordCount} {wordCount === 1 ? "WORD" : "WORDS"}
             </span>
           </div>
-          <div className="border-b border-neutral-200" />
+          <div className="border-b" style={{ borderColor: colors.hairline }} />
         </div>
 
         {/* Title + body */}
@@ -169,7 +221,8 @@ export default function YourSpaceWritePage() {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title your story..."
             rows={1}
-            className="w-full font-serif text-4xl font-medium placeholder:text-neutral-300 outline-none bg-transparent resize-none overflow-hidden"
+            className="w-full outline-none bg-transparent resize-none overflow-hidden"
+            style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: "clamp(28px, 4.5vw, 44px)", lineHeight: 1.15, color: colors.ink }}
             onInput={(e) => {
               e.target.style.height = "auto";
               e.target.style.height = e.target.scrollHeight + "px";
@@ -180,25 +233,35 @@ export default function YourSpaceWritePage() {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Tell your story..."
             rows={10}
-            className="w-full font-sans text-base leading-relaxed text-neutral-700 placeholder:text-neutral-300 outline-none bg-transparent resize-none mt-6"
+            className="w-full outline-none bg-transparent resize-none mt-6"
+            style={{ fontFamily: fonts.display, fontSize: 18, lineHeight: 1.7, color: "#3a3a38" }}
           />
         </div>
       </main>
 
       {/* Bottom action bar */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-3xl px-6">
-        <div className="flex items-center justify-between bg-white rounded-2xl shadow-lg border border-neutral-100 px-6 py-4">
-          <div className="flex items-center gap-2 font-sans text-sm text-neutral-500">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 inline-block" />
-            Last saved 2 minutes ago
+      <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 w-full max-w-3xl px-5 sm:px-6">
+        <div
+          className="flex flex-wrap items-center justify-between gap-4 px-5 sm:px-6 py-4"
+          style={{ backgroundColor: "#ffffff", border: `1px solid ${colors.hairline}`, boxShadow: "0 12px 32px rgba(20,20,20,0.08)" }}
+        >
+          <div className="flex items-center gap-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.04em", color: colors.muted }}>
+            <span className="w-2 h-2 inline-block" style={{ backgroundColor: colors.accent }} />
+            LAST SAVED 2 MIN AGO
           </div>
 
           <div className="flex items-center gap-6">
-            <button className="font-sans text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors">
-              Save Draft
+            <button
+              className="transition-opacity hover:opacity-70"
+              style={{ fontFamily: fonts.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: colors.ink }}
+            >
+              SAVE DRAFT
             </button>
-            <button className="font-sans text-sm font-medium bg-indigo-700 hover:bg-indigo-800 transition-colors text-white rounded-full px-6 py-2.5">
-              Publish
+            <button
+              className="px-6 py-2.5 hover:opacity-90 transition-opacity"
+              style={{ fontFamily: fonts.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", backgroundColor: colors.accent, color: colors.ink }}
+            >
+              PUBLISH
             </button>
           </div>
         </div>

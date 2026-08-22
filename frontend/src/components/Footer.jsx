@@ -1,76 +1,53 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
+// Same tokens as Navbar.jsx and the rest of the Awwwards-themed pages.
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  hairline: "#d6d6d3",
+};
 
+const fonts = {
+  mono: "'Space Mono', monospace",
+};
 
-const LINK_COLUMNS = [
-  {
-    title: "Quick Links",
-    links: ["Home", "Write", "Search", "Dashboard"],
-  },
-  {
-    title: "Categories",
-    links: ["Technology", "AI", "Programming", "Web Dev"],
-  },
-  {
-    title: "Resources",
-    links: ["About", "Privacy", "Contact", "Terms"],
-  },
+const FOOTER_LINKS = [
+  { label: "ABOUT", to: "/about" },
+  { label: "PRIVACY", to: "/privacy" },
+  { label: "TERMS", to: "/terms" },
+  { label: "CONTACT", to: "/contact" },
+  { label: "NEWSLETTER", to: "/newsletter" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-neutral-400 px-6 py-14 font-sans">
-      <div className="max-w-5xl mx-auto">
-        {/* Brand */}
-        <div className="mb-10">
-          <div className="flex items-center gap-2.5 mb-3">
-            <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center font-bold text-sm text-neutral-900 flex-shrink-0">
-              N
-            </div>
-            <span className="text-white font-semibold text-lg">
-              Yourspace
-            </span>
-          </div>
-          <p className="text-sm text-neutral-500 leading-relaxed">
-            Write what your heart says!
-          </p>
-        </div>
+    <footer
+      className="relative z-10 px-5 sm:px-8 md:px-14 py-10"
+      style={{ backgroundColor: colors.bg, borderTop: `1px solid ${colors.hairline}` }}
+    >
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.12em", color: colors.ink, fontWeight: 700 }}>
+          YOURSPACE
+        </span>
 
-        {/* Link columns — horizontal */}
-        <div className="flex flex-col sm:flex-row sm:justify-between gap-10">
-          {LINK_COLUMNS.map((col) => (
-            <div key={col.title}>
-              <h4 className="text-white text-sm font-semibold mb-4">
-                {col.title}
-              </h4>
-              <ul className="space-y-3">
-                {col.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="text-sm text-neutral-400 hover:text-white transition-colors"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <nav className="flex flex-wrap justify-center gap-6">
+          {FOOTER_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="hover:underline"
+              style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.1em", color: colors.muted }}
+            >
+              {link.label}
+            </Link>
           ))}
-        </div>
+        </nav>
 
-        {/* Divider */}
-        <div className="w-full h-px bg-white/10 my-10" />
-
-        {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-neutral-500">
-            © 2026 Yourspace.
-          </p>
-          <p className="text-xs text-neutral-500">
-            Developed by Shivansh Saxena. All rights reserved.
-          </p>
-        </div>
+        <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.06em", color: colors.muted }}>
+          © {new Date().getFullYear()} YOURSPACE
+        </span>
       </div>
     </footer>
   );

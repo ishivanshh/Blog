@@ -1,150 +1,204 @@
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import {Link } from "react-router-dom";
+import React, { useState } from "react";
 
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  faint: "#eeeeec",
+  hairline: "#d6d6d3",
+  accent: "#e3ff4f",
+};
+
+const fonts = {
+  display: "'Fraunces', serif",
+  mono: "'Space Mono', monospace",
+};
+
+function Wordmark() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0 overflow-hidden pointer-events-none select-none flex items-center justify-end"
+      style={{ zIndex: 0 }}
+    >
+      <span
+        style={{
+          fontFamily: fonts.display,
+          fontWeight: 600,
+          fontSize: "min(22vw, 260px)",
+          color: colors.ink,
+          opacity: 0.035,
+          whiteSpace: "nowrap",
+          lineHeight: 1,
+          transform: "translateX(6%)",
+        }}
+      >
+        YOURSPACE
+      </span>
+    </div>
+  );
+}
+
+function MonoLabel({ children }) {
+  return (
+    <label
+      className="block mb-1"
+      style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.14em", color: colors.muted }}
+    >
+      {children}
+    </label>
+  );
+}
+
+function UnderlineField({ label, type, value, onChange, error, showToggle, visible, onToggle, prefix }) {
+  return (
+    <div className="mb-8">
+      <MonoLabel>{label}</MonoLabel>
+      <div className="flex items-center border-b" style={{ borderColor: error ? "#c23b3b" : colors.hairline }}>
+        {prefix && (
+          <span style={{ fontFamily: fonts.mono, fontSize: 14, color: colors.muted }}>{prefix}</span>
+        )}
+        <input
+          type={showToggle ? (visible ? "text" : "password") : type}
+          value={value}
+          onChange={onChange}
+          className="w-full bg-transparent py-2 focus:outline-none"
+          style={{ fontFamily: fonts.mono, fontSize: 14, color: colors.ink }}
+        />
+        {showToggle && (
+          <button
+            type="button"
+            onClick={onToggle}
+            style={{ color: colors.muted, fontFamily: fonts.mono, fontSize: 11 }}
+          >
+            {visible ? "HIDE" : "SHOW"}
+          </button>
+        )}
+      </div>
+      {error && (
+        <p className="mt-1.5" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function Signup() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({
-    fullName: "",
-    username: "",
-    email: "",
-    password: "",
-  });
+  // const [avatar, setAvatar] = useState(null);
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (field) => (e) =>
-    setForm((f) => ({ ...f, [field]: e.target.value }));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const next = {};
+    if (!name) next.name = "Required.";
+    if (!username) next.username = "Required.";
+    else if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) next.username = "3–20 chars: letters, numbers, _.";
+    if (!email) next.email = "Required.";
+    if (password.length < 8) next.password = "Min. 8 characters.";
+    setErrors(next);
+    if (Object.keys(next).length === 0) setSubmitted(true);
+  };
 
   return (
-    <div className="min-h-screen flex font-sans">
-      {/* Left panel — illustration side (use public/signup.png) */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center p-12 bg-white">
-        <img
-          src="/signup.png"
-          alt="Signup illustration"
-          className="absolute inset-0 w-full h-full object-fit"
-        />
-        {/* <div className="absolute z-10  max-w-sm text-black">
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-8">
-            <span className="text-2xl font-bold text-neutral-900">N</span>
-          </div>
-          <h2 className="text-3xl font-bold mb-4">Write what your heart says</h2>
-          <p className="text-neutral-200 text-sm leading-relaxed">
-            Join a space where writers share ideas on technology, design,
-            culture and everything in between.
-          </p>
-        </div> */}
-      </div>
+    <div className="min-h-screen relative overflow-hidden antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
+      <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
-      {/* Right panel — form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 bg-white">
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-2.5 mb-10">
-            <div className="w-9 h-9 rounded-full bg-neutral-900 flex items-center justify-center font-bold text-sm text-white flex-shrink-0">
-              N
-            </div>
-            <span className="text-neutral-900 font-semibold text-3xl">
-              Yourspace
+      <Wordmark />
+
+      <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 md:px-14 py-6">
+        <span style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.14em", color: colors.muted }}>
+          YOURSPACE
+        </span>
+        <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
+          02 / REGISTER
+        </span>
+      </header>
+
+      <main className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 px-5 sm:px-8 md:px-14 pt-10 pb-20 lg:min-h-[80vh]">
+        {/* Left: editorial copy */}
+        <div className="max-w-lg">
+          <h1
+            className="mb-6"
+            style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: "clamp(38px, 5.5vw, 64px)", lineHeight: 1.02, letterSpacing: "-0.01em" }}
+          >
+            YOURSPACE
+          </h1>
+          <p style={{ fontFamily: fonts.display, fontSize: 18, lineHeight: 1.6, color: colors.muted, maxWidth: 420 }}>
+            Join the vanguard of digital expression. Where avant-garde design meets uncompromising narrative depth.
+          </p>
+          <div className="mt-16 hidden lg:block">
+            <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.14em", color: colors.muted }}>
+              EDITORIAL STANDARDS. DEFINED.
             </span>
           </div>
-
-          <h1 className="text-3xl font-bold text-neutral-900 mb-8">
-            Create account
-          </h1>
-
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col gap-3"
-          >
-            <input
-              type="text"
-              placeholder="Full name"
-              value={form.fullName}
-              onChange={handleChange("fullName")}
-              required
-              className="w-full text-sm text-neutral-900 placeholder-neutral-400 bg-neutral-100 rounded-full px-5 py-4 outline-none border border-transparent focus:border-neutral-300 transition-colors"
-            />
-
-            <input
-              type="text"
-              placeholder="Username"
-              value={form.username}
-              onChange={handleChange("username")}
-              required
-              className="w-full text-sm text-neutral-900 placeholder-neutral-400 bg-neutral-100 rounded-full px-5 py-4 outline-none border border-transparent focus:border-neutral-300 transition-colors"
-            />
-
-            <input
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange("email")}
-              required
-              className="w-full text-sm text-neutral-900 placeholder-neutral-400 bg-neutral-100 rounded-full px-5 py-4 outline-none border border-transparent focus:border-neutral-300 transition-colors"
-            />
-
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange("password")}
-                required
-                className="w-full text-sm text-neutral-900 placeholder-neutral-400 bg-neutral-100 rounded-full px-5 py-4 pr-12 outline-none border border-transparent focus:border-neutral-300 transition-colors"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-              >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-neutral-900 text-white text-sm font-semibold rounded-full px-5 py-4 mt-2 hover:bg-neutral-800 transition-colors"
-            >
-              Create account
-            </button>
-          </form>
-
-          <p className="text-center text-xs text-neutral-400 mt-6">
-            or sign up with
-          </p>
-
-          <div className="flex items-center justify-center gap-3 mt-4">
-            <button
-              type="button"
-              aria-label="Sign up with Google"
-              className="w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
-            >
-              <span className="text-sm font-bold text-neutral-700">G</span>
-            </button>
-        
-          </div>
-
-          <p className="text-center text-xs text-neutral-400 mt-8 leading-relaxed">
-            By creating an account you agree to Yourspace's{" "}
-            <a href="#" className="text-neutral-900 font-medium">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-neutral-900 font-medium">
-              Privacy Policy
-            </a>
-            .
-          </p>
-
-          <p className="text-center text-sm text-neutral-600 mt-8">
-            Have an account?{" "}
-            <Link to="/login" className="text-neutral-900 font-semibold">
-              Log in
-            </Link>
-          </p>
         </div>
-      </div>
+
+        {/* Right: form */}
+        <div className="w-full max-w-[420px]">
+          <p style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 26, marginBottom: 32, color: colors.muted, opacity: 0.9 }}>
+            Create Account
+          </p>
+
+          {submitted ? (
+            <div className="py-10">
+              <p style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.1em" }}>PROFILE INITIALIZED</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} noValidate>
+            
+
+              <UnderlineField label="FULL NAME" type="text" value={name} onChange={(e) => setName(e.target.value)} error={errors.name} />
+              <UnderlineField label="USERNAME" type="text" prefix="@" value={username} onChange={(e) => setUsername(e.target.value)} error={errors.username} />
+              <UnderlineField label="EMAIL ADDRESS" type="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
+              <UnderlineField
+                label="PASSWORD"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                showToggle
+                visible={showPw}
+                onToggle={() => setShowPw(!showPw)}
+              />
+
+              <button
+                type="submit"
+                className="w-full flex items-center justify-between px-5 py-4 mt-4 border hover:bg-black hover:text-white transition-colors"
+                style={{ borderColor: colors.accent, color: colors.ink, backgroundColor: "transparent" }}
+              >
+                <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em" }}>
+                  INITIALIZE PROFILE
+                </span>
+                <span style={{ fontFamily: fonts.mono, fontSize: 15 }}>→</span>
+              </button>
+
+              <p className="mt-8" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.04em", color: colors.muted, lineHeight: 1.7 }}>
+                BY PROCEEDING, YOU ACKNOWLEDGE AGREEMENT TO THE{" "}
+                <a href="#" className="hover:underline" style={{ color: colors.ink }}>
+                  GUIDELINES
+                </a>{" "}
+                AND{" "}
+                <a href="#" className="hover:underline" style={{ color: colors.ink }}>
+                  TERMS OF ACCESS.
+                </a>
+              </p>
+              <p className="mt-2" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.04em", color: colors.muted }}>
+                EXISTING ENTITY?{" "}
+                <a href="#" className="hover:underline" style={{ color: colors.ink }}>
+                  AUTHENTICATE HERE.
+                </a>
+              </p>
+            </form>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
