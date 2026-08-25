@@ -591,8 +591,8 @@ function Hero({ user }) {
           <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>START WRITING</span>
           <span style={{ fontFamily: fonts.mono, fontSize: 14 }}>→</span>
         </a>
-        <a href="/profile" className="px-7 py-3.5 border" style={{ borderColor: colors.hairline, color: colors.ink }}>
-          <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>VIEW PROFILE</span>
+        <a href="/feedback" className="px-7 py-3.5 border" style={{ borderColor: colors.hairline, color: colors.ink }}>
+          <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>Give Feedback</span>
         </a>
       </div>
     </section>
@@ -975,6 +975,7 @@ export default function Dashboard() {
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <Wordmark />
       <div className="relative z-10">
+
         <Hero user={user} />
 
         <WritingStats />

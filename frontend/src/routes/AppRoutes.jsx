@@ -14,6 +14,7 @@ import MyBlogs from "../pages/MyBlog";
 import EditBlog from "../pages/EditBlog";
 import NotFound from "../pages/NotFound";
 import Explore from "../pages/Explore";
+import Feedback from "../pages/Feedback";
 const router = createBrowserRouter([
   // =========================
   // MAIN LAYOUT
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "explore",
         element: <Explore />,
+      },
+      {
+        path: "feedback",
+        element: <Feedback />,
       }
     ],
   },
