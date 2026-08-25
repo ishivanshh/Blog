@@ -152,7 +152,7 @@ export default function Signup() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} noValidate>
-            
+
 
               <UnderlineField label="FULL NAME" type="text" value={name} onChange={(e) => setName(e.target.value)} error={errors.name} />
               <UnderlineField label="USERNAME" type="text" prefix="@" value={username} onChange={(e) => setUsername(e.target.value)} error={errors.username} />
@@ -191,7 +191,7 @@ export default function Signup() {
               </p>
               <p className="mt-2" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.04em", color: colors.muted }}>
                 EXISTING ENTITY?{" "}
-                <a href="#" className="hover:underline" style={{ color: colors.ink }}>
+                <a href="/login" className="hover:underline" style={{ color: colors.ink }}>
                   AUTHENTICATE HERE.
                 </a>
               </p>

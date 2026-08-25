@@ -70,17 +70,17 @@ export default function NotFound() {
 
         <div className="flex flex-col sm:flex-row gap-4">
           <a
-            href="#"
+            href="/login"
             className="flex items-center justify-center gap-3 px-8 py-4 hover:opacity-90 transition-opacity"
             style={{ backgroundColor: colors.accent, color: colors.ink }}
           >
             <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em" }}>
-              RETURN HOME
+              RETURN LOGIN
             </span>
             <span style={{ fontFamily: fonts.mono, fontSize: 15 }}>→</span>
           </a>
           <a
-            href="#"
+            href="/explore"
             className="flex items-center justify-center gap-3 px-8 py-4 border hover:bg-black hover:text-white transition-colors"
             style={{ borderColor: colors.hairline, color: colors.ink }}
           >

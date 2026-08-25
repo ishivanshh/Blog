@@ -172,7 +172,7 @@ export default function Login() {
                     />
                     <span style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted }}>Remember Me</span>
                   </label>
-                  <a href="#" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted }}>
+                  <a href="/notfound" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted }}>
                     Reset Access
                   </a>
                 </div>
@@ -188,8 +188,8 @@ export default function Login() {
 
                 <p className="text-center mt-8" style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted }}>
                   Uninitiated?{" "}
-                  <a href="#" className="hover:underline" style={{ color: colors.ink }}>
-                    Request an invite.
+                  <a href="/signup" className="hover:underline" style={{ color: colors.ink }}>
+                    Create an Acoount
                   </a>
                 </p>
               </form>

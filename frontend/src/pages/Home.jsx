@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
 
 const colors = {
   bg: "#fafaf8",
@@ -14,7 +15,7 @@ const fonts = {
   display: "'Fraunces', serif",
   mono: "'Space Mono', monospace",
 };
-
+const navItems = [{ name: "HOME", path: "/" }, { name: "EXPLORE", path: "/explore" }, { name: "CATEGORIES", path: "/categories" },];
 function Wordmark() {
   return (
     <div
@@ -52,30 +53,13 @@ function Nav() {
       <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
         YOURSPACE
       </span>
-      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
-        {["HOME", "EXPLORE", "CATEGORIES"].map((item, i) => (
-          <a
-            key={item}
-            href="#"
-            style={{
-              fontFamily: fonts.mono,
-              fontSize: 11,
-              letterSpacing: "0.1em",
-              color: i === 0 ? colors.ink : colors.muted,
-              borderBottom: i === 0 ? `1px solid ${colors.ink}` : "none",
-              paddingBottom: 2,
-            }}
-          >
-            {item}
-          </a>
-        ))}
-      </nav>
+      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start"> {navItems.map((item) => (<NavLink key={item.name} to={item.path} style={({ isActive }) => ({ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: isActive ? colors.ink : colors.muted, borderBottom: isActive ? `1px solid ${colors.ink}` : "none", paddingBottom: 2, })} > {item.name} </NavLink>))} </nav>
       <div className="flex items-center gap-3 sm:gap-6 order-2 md:order-3">
-        <a href="#" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
+        <a href="/login" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
           LOGIN
         </a>
         <a
-          href="#"
+          href="/signup"
           className="px-4 sm:px-5 py-2"
           style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", fontWeight: 700, backgroundColor: colors.accent, color: colors.ink }}
         >
@@ -89,9 +73,6 @@ function Nav() {
 function Hero() {
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 pt-14 sm:pt-20 pb-16 max-w-3xl">
-      <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", color: colors.muted }}>
-        VOL. 04 — EDITORIAL PLATFORM
-      </span>
       <h1
         className="mt-5 mb-6"
         style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: "clamp(44px, 7vw, 92px)", lineHeight: 0.98, letterSpacing: "-0.02em" }}
@@ -105,7 +86,7 @@ function Hero() {
       </p>
       <div className="flex items-center gap-4 mt-10">
         <a
-          href="#"
+          href="/login"
           className="flex items-center gap-3 px-7 py-3.5 hover:opacity-90 transition-opacity"
           style={{ backgroundColor: colors.accent, color: colors.ink }}
         >
@@ -113,8 +94,8 @@ function Hero() {
           <span style={{ fontFamily: fonts.mono, fontSize: 14 }}>→</span>
         </a>
         <a
-          href="#"
-          className="px-7 py-3.5 border hover:bg-black hover:text-white transition-colors"
+          href="/explore"
+          className="px-7 py-3.5 border transition-colors"
           style={{ borderColor: colors.hairline, color: colors.ink }}
         >
           <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>EXPLORE BLOGS</span>
@@ -269,6 +250,82 @@ function LatestWritings() {
     </section>
   );
 }
+function Newsletter() {
+  const [email, setEmail] = React.useState("");
+  const [submitted, setSubmitted] = React.useState(false);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitted(true);
+  }
+
+  return (
+    <section
+      id="newsletter"
+      className="relative z-10 px-5 sm:px-8 md:px-14 py-16 sm:py-20"
+      style={{ borderTop: `1px solid ${colors.hairline}` }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+        <div className="lg:col-span-6">
+          <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.14em", color: colors.muted }}>
+            STAY IN THE LOOP
+          </span>
+          <h3
+            className="mt-3 mb-4"
+            style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: "clamp(28px, 4vw, 42px)", lineHeight: 1.12, color: colors.ink }}
+          >
+            Get the latest blogs in your inbox.
+          </h3>
+          <p style={{ fontFamily: fonts.display, fontSize: 16, lineHeight: 1.6, color: colors.muted, maxWidth: 460 }}>
+            Leave your email so new posts land there as soon as they go live. No spam — only writing, never sales pitches.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="lg:col-span-6">
+          <label
+            htmlFor="home-newsletter-email"
+            className="block mb-2"
+            style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.14em", color: colors.muted }}
+          >
+            YOUR EMAIL
+          </label>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-stretch">
+            <input
+              id="home-newsletter-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="flex-1 bg-transparent py-3 px-0 sm:px-0 sm:pr-4 focus:outline-none"
+              style={{
+                fontFamily: fonts.mono,
+                fontSize: 14,
+                color: colors.ink,
+                borderBottom: `1px solid ${colors.hairline}`,
+              }}
+            />
+            <button
+              type="submit"
+              className="px-7 py-3.5 hover:opacity-90 transition-opacity shrink-0"
+              style={{ backgroundColor: colors.accent, color: colors.ink }}
+            >
+              <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em" }}>
+                SUBSCRIBE
+              </span>
+            </button>
+          </div>
+          <p className="mt-4" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.08em", color: colors.muted }}>
+            {submitted
+              ? "YOU'RE ON THE LIST. WE'LL ONLY WRITE WHEN THERE'S A NEW POST."
+              : "NO SPAM. UNSUBSCRIBE ANYTIME. WE NEVER SHARE YOUR ADDRESS."}
+          </p>
+        </form>
+      </div>
+    </section>
+  );
+}
 
 function Footer() {
   const links = ["ABOUT", "PRIVACY", "TERMS", "CONTACT", "NEWSLETTER"];
@@ -286,7 +343,8 @@ function Footer() {
           ))}
         </nav>
         <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.06em", color: colors.muted }}>
-          © 2026 YOURSPACE
+          © 2026 YOURSPACE <br />
+          Designed:Shivansh Saxena
         </span>
       </div>
     </footer>
@@ -310,6 +368,7 @@ export default function Home() {
         <CategoryStrip />
         <FeaturedPost />
         <LatestWritings />
+        <Newsletter />
         <Footer />
       </div>
     </div>

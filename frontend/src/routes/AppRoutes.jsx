@@ -2,7 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
-
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Home from "../pages/Home";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
@@ -12,7 +13,7 @@ import Profile from "../pages/Profile";
 import MyBlogs from "../pages/MyBlog";
 import EditBlog from "../pages/EditBlog";
 import NotFound from "../pages/NotFound";
-
+import Explore from "../pages/Explore";
 const router = createBrowserRouter([
   // =========================
   // MAIN LAYOUT
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
         path: "editblog/:id",
         element: <EditBlog />,
       },
+      {
+        path: "explore",
+        element: <Explore />,
+      }
     ],
   },
 
