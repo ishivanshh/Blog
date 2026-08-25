@@ -50,9 +50,11 @@ function Nav() {
       className="relative z-10 flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5 md:py-6"
       style={{ borderBottom: `1px solid ${colors.hairline}` }}
     >
-      <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
-        YOURSPACE
-      </span>
+      <Link to="/">
+        <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
+          YOURSPACE
+        </span>
+      </Link>
       <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start"> {navItems.map((item) => (<NavLink key={item.name} to={item.path} style={({ isActive }) => ({ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: isActive ? colors.ink : colors.muted, borderBottom: isActive ? `1px solid ${colors.ink}` : "none", paddingBottom: 2, })} > {item.name} </NavLink>))} </nav>
       <div className="flex items-center gap-3 sm:gap-6 order-2 md:order-3">
         <a href="/login" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>

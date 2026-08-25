@@ -1,356 +1,828 @@
-import React, { useState } from "react";
-import {
-  PenSquare,
-  Eye,
-  MessageSquare,
-  Heart,
-  Search,
-  Play,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
 
-const publishedStories = [
-  {
-    id: 1,
-    category: "ARCHITECTURE",
-    status: "Published Oct 12, 2024",
-    title: "The Poetics of Concrete: A Study in Modernism",
-    excerpt:
-      "Exploring how raw materials transform into emotional experiences within the urban landsca...",
-    image:
-      "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=600&q=80",
-    stat1: { icon: Eye, value: "4.2k" },
-    stat2: { icon: MessageSquare, value: "12" },
-  },
-  {
-    id: 3,
-    category: "TECHNOLOGY",
-    status: "Published Sep 28, 2024",
-    title: "The Aesthetic of Artificial Intelligence",
-    excerpt:
-      "Redefining the creative process as a collaborative dialogue between human intuition and machine...",
-    image:
-      "https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=600&q=80",
-    stat1: { icon: Eye, value: "8.6k" },
-    stat2: { icon: Heart, value: "342" },
-  },
-];
+const colors = {
+  bg: "#fafaf8",
+  ink: "#141414",
+  muted: "#8f8f8f",
+  faint: "#eeeeec",
+  hairline: "#d6d6d3",
+  accent: "#e3ff4f",
+};
 
-const draftStories = [
-  {
-    id: 2,
-    category: "PHILOSOPHY",
-    status: "Draft · Last edit 4h ago",
-    title: "Beyond the Digital Veil: Finding Focus in a Hyper-Connected World",
-    excerpt:
-      "How we navigate the constant influx of data while maintaining our capacity for deep contemplatio...",
-    image:
-      "https://images.unsplash.com/photo-1517971071642-34a2d3ecc9cd?w=600&q=80",
-    progress: 75,
-  },
-];
+const fonts = {
+  display: "'Fraunces', serif",
+  mono: "'Space Mono', monospace",
+};
 
-const recentDrafts = [
-  { title: '"The Architecture..."', edited: "Edited 2h ago" },
-  { title: '"Digital Nomadis..."', edited: "Edited 1d ago" },
-];
-
-function PublishedCard({ story }) {
-  const Stat1Icon = story.stat1.icon;
-  const Stat2Icon = story.stat2.icon;
+function ProfileHeader({ user, editing, setEditing }) {
   return (
-    <div className="bg-white rounded-2xl border border-neutral-100 p-6 flex gap-6">
-      <div
-        className="w-40 h-28 rounded-xl bg-cover bg-center flex-shrink-0"
-        style={{ backgroundImage: `url('${story.image}')` }}
-      />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-3 mb-3">
-          <span className="font-sans text-[11px] font-semibold tracking-wide bg-neutral-100 text-neutral-600 rounded-md px-2.5 py-1">
-            {story.category}
-          </span>
-          <span className="font-sans text-xs text-indigo-600 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" />
-            {story.status}
-          </span>
-        </div>
-        <h3 className="font-serif text-xl font-medium leading-snug mb-2">
-          {story.title}
-        </h3>
-        <p className="font-sans text-sm text-neutral-500 leading-relaxed mb-4">
-          {story.excerpt}
-        </p>
-        <div className="flex items-center gap-5 font-sans text-sm text-neutral-500">
-          <span className="flex items-center gap-1.5">
-            <Stat1Icon className="w-4 h-4" />
-            {story.stat1.value}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Stat2Icon className="w-4 h-4" />
-            {story.stat2.value}
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 flex-shrink-0 w-28">
-        <button className="font-sans text-sm font-medium bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg px-4 py-2 flex items-center justify-center gap-1.5">
-          <Pencil className="w-3.5 h-3.5" />
-          Edit
-        </button>
-        <button className="font-sans text-sm font-medium bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg px-4 py-2 flex items-center justify-center gap-1.5 text-neutral-600">
-          <Trash2 className="w-3.5 h-3.5" />
-          Delete
-        </button>
-      </div>
-    </div>
-  );
-}
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 pt-14 md:pt-20 pb-14">
+      <div className="max-w-5xl">
+        <span
+          style={{
+            fontFamily: fonts.mono,
+            fontSize: 10,
+            letterSpacing: "0.14em",
+            color: colors.muted,
+          }}
+        >
+          YOURSPACE / PROFILE
+        </span>
 
-function DraftCard({ story }) {
-  return (
-    <div className="bg-white rounded-2xl border border-neutral-100 p-6 flex gap-6">
-      <div
-        className="w-40 h-28 rounded-xl bg-cover bg-center flex-shrink-0"
-        style={{ backgroundImage: `url('${story.image}')` }}
-      />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-3 mb-3">
-          <span className="font-sans text-[11px] font-semibold tracking-wide bg-neutral-100 text-neutral-600 rounded-md px-2.5 py-1">
-            {story.category}
-          </span>
-          <span className="font-sans text-xs text-amber-600">
-            {story.status}
-          </span>
-        </div>
-        <h3 className="font-serif text-xl font-medium leading-snug mb-2">
-          {story.title}
-        </h3>
-        <p className="font-sans text-sm text-neutral-500 leading-relaxed mb-4">
-          {story.excerpt}
-        </p>
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-1.5 rounded-full bg-neutral-100 overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mt-6">
+          <div className="flex items-center gap-6">
+            {/* Avatar */}
             <div
-              className="h-full rounded-full bg-amber-600"
-              style={{ width: `${story.progress}%` }}
-            />
-          </div>
-        </div>
-        <div className="font-sans text-xs text-neutral-400 mt-2">
-          {story.progress}% Complete
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 flex-shrink-0 w-28">
-        <button className="font-sans text-sm font-medium bg-indigo-700 hover:bg-indigo-800 transition-colors text-white rounded-lg px-4 py-2 flex items-center justify-center gap-1.5">
-          <Play className="w-3.5 h-3.5" fill="currentColor" />
-          Resume
-        </button>
-        <button className="font-sans text-sm font-medium bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg px-4 py-2 flex items-center justify-center gap-1.5 text-neutral-600">
-          <Trash2 className="w-3.5 h-3.5" />
-          Delete
-        </button>
-      </div>
-    </div>
-  );
-}
-
-export default function YourSpaceMyStoriesPage() {
-  const [activeTab, setActiveTab] = useState("published");
-
-  const stories = activeTab === "published" ? publishedStories : draftStories;
-
-  return (
-    <div className="min-h-screen bg-[#F7F8FA] text-neutral-900 font-serif">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-          <span className="text-xl font-bold tracking-tight font-serif">
-            YOURSPACE
-          </span>
-
-          <nav className="flex items-center gap-8 font-sans text-sm">
-            <a href="#" className="text-neutral-600 hover:text-neutral-900">
-              Explore
-            </a>
-            <a
-              href="#"
-              className="text-indigo-600 border-b-2 border-indigo-600 pb-1 font-medium"
-            >
-              Write
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-5">
-            <button className="text-neutral-500 hover:text-neutral-800 transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-            <div
-              className="w-9 h-9 rounded-full bg-cover bg-center bg-neutral-800"
+              className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden shrink-0 flex items-center justify-center"
               style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80')",
+                backgroundColor: colors.faint,
+                border: `1px solid ${colors.hairline}`,
               }}
-            />
+            >
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 42,
+                    color: colors.muted,
+                  }}
+                >
+                  person
+                </span>
+              )}
+            </div>
+
+            {/* User identity */}
+            <div>
+              <h1
+                style={{
+                  fontFamily: fonts.display,
+                  fontWeight: 600,
+                  fontSize: "clamp(36px, 5vw, 58px)",
+                  lineHeight: 0.98,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {user.name}
+              </h1>
+
+              <p
+                className="mt-3"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  color: colors.muted,
+                }}
+              >
+                @{user.username}
+              </p>
+
+              <p
+                className="mt-1"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.04em",
+                  color: colors.muted,
+                }}
+              >
+                {user.email}
+              </p>
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setEditing(!editing)}
+            className="flex items-center justify-center gap-2 px-6 py-3 hover:opacity-80 transition-opacity"
+            style={{
+              border: `1px solid ${colors.hairline}`,
+              fontFamily: fonts.mono,
+              fontSize: 10,
+              letterSpacing: "0.1em",
+              color: colors.ink,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              {editing ? "close" : "edit"}
+            </span>
+
+            {editing ? "CANCEL" : "EDIT PROFILE"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProfileInformation({ user, setUser, editing }) {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 pb-16">
+      <div className="max-w-5xl">
+        <div
+          className="flex items-end justify-between mb-6 pb-3"
+          style={{
+            borderBottom: `1px solid ${colors.hairline}`,
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontFamily: fonts.mono,
+                fontSize: 10,
+                letterSpacing: "0.12em",
+                color: colors.muted,
+              }}
+            >
+              ACCOUNT
+            </span>
+
+            <h2
+              className="mt-2"
+              style={{
+                fontFamily: fonts.display,
+                fontWeight: 600,
+                fontSize: 28,
+              }}
+            >
+              Profile Information
+            </h2>
+          </div>
+        </div>
+
+        <div
+          className="p-6 md:p-8"
+          style={{
+            border: `1px solid ${colors.hairline}`,
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Name */}
+            <div>
+              <label
+                className="block mb-2"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  color: colors.ink,
+                }}
+              >
+                NAME
+              </label>
+
+              <input
+                type="text"
+                name="name"
+                value={user.name}
+                disabled={!editing}
+                onChange={handleChange}
+                className="w-full px-4 py-3 outline-none"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  color: colors.ink,
+                  backgroundColor: editing
+                    ? colors.faint
+                    : "transparent",
+                  border: `1px solid ${colors.hairline}`,
+                  opacity: editing ? 1 : 0.7,
+                }}
+              />
+            </div>
+
+            {/* Username */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontSize: 10,
+                    letterSpacing: "0.1em",
+                    color: colors.ink,
+                  }}
+                >
+                  USERNAME
+                </label>
+
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 14,
+                    color: colors.muted,
+                  }}
+                >
+                  lock
+                </span>
+              </div>
+
+              <input
+                type="text"
+                value={user.username}
+                disabled
+                className="w-full px-4 py-3 outline-none"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  color: colors.muted,
+                  backgroundColor: colors.faint,
+                  border: `1px solid ${colors.hairline}`,
+                  cursor: "not-allowed",
+                }}
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontSize: 10,
+                    letterSpacing: "0.1em",
+                    color: colors.ink,
+                  }}
+                >
+                  EMAIL
+                </label>
+
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 14,
+                    color: colors.muted,
+                  }}
+                >
+                  lock
+                </span>
+              </div>
+
+              <input
+                type="email"
+                value={user.email}
+                disabled
+                className="w-full px-4 py-3 outline-none"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  color: colors.muted,
+                  backgroundColor: colors.faint,
+                  border: `1px solid ${colors.hairline}`,
+                  cursor: "not-allowed",
+                }}
+              />
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label
+                className="block mb-2"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  color: colors.ink,
+                }}
+              >
+                BIO
+              </label>
+
+              <textarea
+                name="bio"
+                value={user.bio}
+                disabled={!editing}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Tell people a little about yourself..."
+                className="w-full px-4 py-3 outline-none resize-none"
+                style={{
+                  fontFamily: fonts.display,
+                  fontSize: 15,
+                  lineHeight: 1.5,
+                  color: colors.ink,
+                  backgroundColor: editing
+                    ? colors.faint
+                    : "transparent",
+                  border: `1px solid ${colors.hairline}`,
+                  opacity: editing ? 1 : 0.7,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Save */}
+          {editing && (
+            <div
+              className="flex justify-end mt-7 pt-6"
+              style={{
+                borderTop: `1px solid ${colors.hairline}`,
+              }}
+            >
+              <button
+                type="button"
+                className="px-7 py-3.5 hover:opacity-90 transition-opacity"
+                style={{
+                  backgroundColor: colors.accent,
+                  color: colors.ink,
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                }}
+                onClick={() => {
+                  // TODO: update profile API
+                  console.log("Updated user:", user);
+                }}
+              >
+                SAVE CHANGES →
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Locked fields explanation */}
+        <p
+          className="mt-3"
+          style={{
+            fontFamily: fonts.mono,
+            fontSize: 9,
+            letterSpacing: "0.04em",
+            color: colors.muted,
+          }}
+        >
+          USERNAME AND EMAIL ARE ACCOUNT IDENTIFIERS AND CANNOT BE CHANGED.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function WritingStats({ blogs }) {
+  const published = blogs.filter(
+    (blog) => blog.status === "PUBLISHED"
+  ).length;
+
+  const drafts = blogs.filter(
+    (blog) => blog.status === "DRAFT"
+  ).length;
+
+  const stats = [
+    {
+      label: "PUBLISHED",
+      value: published.toString().padStart(2, "0"),
+      icon: "public",
+    },
+    {
+      label: "DRAFTS",
+      value: drafts.toString().padStart(2, "0"),
+      icon: "edit_note",
+    },
+    {
+      label: "TOTAL BLOGS",
+      value: blogs.length.toString().padStart(2, "0"),
+      icon: "article",
+    },
+  ];
+
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 pb-16">
+      <div className="max-w-5xl">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-3"
+          style={{
+            borderTop: `1px solid ${colors.hairline}`,
+          }}
+        >
+          {stats.map((stat, index) => (
+            <div
+              key={stat.label}
+              className="p-6 md:p-8"
+              style={{
+                borderRight:
+                  index !== stats.length - 1
+                    ? `1px solid ${colors.hairline}`
+                    : "none",
+                borderBottom: `1px solid ${colors.hairline}`,
+              }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 19,
+                    color: colors.muted,
+                  }}
+                >
+                  {stat.icon}
+                </span>
+
+                <span
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontSize: 9,
+                    letterSpacing: "0.1em",
+                    color: colors.muted,
+                  }}
+                >
+                  YOURSPACE
+                </span>
+              </div>
+
+              <div
+                style={{
+                  fontFamily: fonts.display,
+                  fontWeight: 600,
+                  fontSize: 38,
+                }}
+              >
+                {stat.value}
+              </div>
+
+              <div
+                className="mt-1"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  color: colors.muted,
+                }}
+              >
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BlogList({ blogs, type }) {
+  const filteredBlogs = blogs.filter(
+    (blog) => blog.status === type
+  );
+
+  return (
+    <section className="relative z-10 px-5 sm:px-8 md:px-14 pb-16">
+      <div className="max-w-5xl">
+        <div
+          className="flex justify-between items-end mb-6 pb-3"
+          style={{
+            borderBottom: `1px solid ${colors.hairline}`,
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontFamily: fonts.mono,
+                fontSize: 10,
+                letterSpacing: "0.12em",
+                color: colors.muted,
+              }}
+            >
+              YOUR WRITING
+            </span>
+
+            <h2
+              className="mt-2"
+              style={{
+                fontFamily: fonts.display,
+                fontWeight: 600,
+                fontSize: 28,
+              }}
+            >
+              {type === "PUBLISHED"
+                ? "Published Blogs"
+                : "Drafts"}
+            </h2>
+          </div>
+
+          <span
+            style={{
+              fontFamily: fonts.mono,
+              fontSize: 10,
+              color: colors.muted,
+            }}
+          >
+            {filteredBlogs.length
+              .toString()
+              .padStart(2, "0")}{" "}
+            POSTS
+          </span>
+        </div>
+
+        {filteredBlogs.length > 0 ? (
+          <div>
+            {filteredBlogs.map((blog, index) => (
+              <div
+                key={blog.id}
+                className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-6"
+                style={{
+                  borderBottom: `1px solid ${colors.hairline}`,
+                }}
+              >
+                {/* Number */}
+                <div
+                  className="md:col-span-1"
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontSize: 10,
+                    color: colors.muted,
+                  }}
+                >
+                  {(index + 1).toString().padStart(2, "0")}
+                </div>
+
+                {/* Blog content */}
+                <div className="md:col-span-7">
+                  <span
+                    style={{
+                      fontFamily: fonts.mono,
+                      fontSize: 9,
+                      letterSpacing: "0.1em",
+                      color: colors.muted,
+                    }}
+                  >
+                    {blog.category}
+                  </span>
+
+                  <h3
+                    className="mt-2"
+                    style={{
+                      fontFamily: fonts.display,
+                      fontWeight: 600,
+                      fontSize: 22,
+                    }}
+                  >
+                    {blog.title}
+                  </h3>
+
+                  <p
+                    className="mt-2 line-clamp-2"
+                    style={{
+                      fontFamily: fonts.display,
+                      fontSize: 14,
+                      lineHeight: 1.5,
+                      color: colors.muted,
+                    }}
+                  >
+                    {blog.excerpt}
+                  </p>
+                </div>
+
+                {/* Date */}
+                <div className="md:col-span-2 md:text-right">
+                  <span
+                    style={{
+                      fontFamily: fonts.mono,
+                      fontSize: 9,
+                      letterSpacing: "0.05em",
+                      color: colors.muted,
+                    }}
+                  >
+                    {blog.date}
+                  </span>
+                </div>
+
+                {/* Action */}
+                <div className="md:col-span-2 md:text-right">
+                  <Link
+                    to={
+                      type === "DRAFT"
+                        ? "/writeblog"
+                        : `/blog/${blog.id}`
+                    }
+                    className="inline-flex items-center gap-1 hover:opacity-60"
+                    style={{
+                      fontFamily: fonts.mono,
+                      fontSize: 10,
+                      letterSpacing: "0.08em",
+                      color: colors.ink,
+                    }}
+                  >
+                    {type === "DRAFT" ? "CONTINUE" : "READ"}
+                    <span>→</span>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="py-16 text-center"
+            style={{
+              borderBottom: `1px solid ${colors.hairline}`,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{
+                fontSize: 32,
+                color: colors.muted,
+              }}
+            >
+              article
+            </span>
+
+            <p
+              className="mt-4"
+              style={{
+                fontFamily: fonts.display,
+                fontSize: 18,
+                color: colors.muted,
+              }}
+            >
+              {type === "DRAFT"
+                ? "You don't have any drafts yet."
+                : "You haven't published anything yet."}
+            </p>
+
+            {type === "DRAFT" && (
+              <Link
+                to="/writeblog"
+                className="inline-flex mt-5 px-6 py-3"
+                style={{
+                  backgroundColor: colors.accent,
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                }}
+              >
+                START WRITING →
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export default function Profile() {
+
+  const [user, setUser] = React.useState({
+    name: "Shivansh Saxena",
+    username: "shivansh",
+    email: "shivansh@example.com",
+    bio: "Engineering student writing about software, AI, web development, and system design.",
+    avatar: null,
+  });
+
+  const [editing, setEditing] = React.useState(false);
+
+  const blogs = [
+    {
+      id: "1",
+      title: "Understanding Uber Functionality",
+      category: "SYSTEM DESIGN",
+      excerpt:
+        "Breaking down the architecture and services behind a large-scale ride sharing platform.",
+      status: "PUBLISHED",
+      date: "AUG 20, 2026",
+    },
+    {
+      id: "2",
+      title: "Authentication with Axios",
+      category: "WEB DEVELOPMENT",
+      excerpt:
+        "Understanding how frontend and backend authentication work together using Axios.",
+      status: "PUBLISHED",
+      date: "AUG 12, 2026",
+    },
+    {
+      id: "3",
+      title: "Understanding React Router",
+      category: "REACT",
+      excerpt:
+        "Layouts, nested routes, protected routes, and application navigation.",
+      status: "PUBLISHED",
+      date: "AUG 07, 2026",
+    },
+    {
+      id: "4",
+      title: "Building a Blog Backend",
+      category: "NODE / EXPRESS",
+      excerpt:
+        "Working through the backend architecture for a full-stack blogging platform.",
+      status: "DRAFT",
+      date: "AUG 23, 2026",
+    },
+    {
+      id: "5",
+      title: "Understanding MongoDB Indexing",
+      category: "DATABASE",
+      excerpt:
+        "Notes and experiments around indexing and query performance.",
+      status: "DRAFT",
+      date: "AUG 21, 2026",
+    },
+  ];
+
+  return (
+    <div
+      className="min-h-screen antialiased pb-16 md:pb-0"
+      style={{
+        backgroundColor: colors.bg,
+        color: colors.ink,
+      }}
+    >
+      {/* Fonts */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
+
+      <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet"
+      />
+
+      {/* Navbar */}
+      <header
+        className="flex items-center justify-between px-5 sm:px-8 md:px-14 py-5 md:py-6"
+        style={{
+          borderBottom: `1px solid ${colors.hairline}`,
+        }}
+      >
+        <Link
+          to="/dashboard"
+          style={{
+            fontFamily: fonts.mono,
+            fontSize: 13,
+            letterSpacing: "0.14em",
+            fontWeight: 700,
+          }}
+        >
+          YOURSPACE
+        </Link>
+
+        <div className="flex items-center gap-6">
+          <Link
+            to="/feedback"
+            style={{
+              fontFamily: fonts.mono,
+              fontSize: 10,
+              letterSpacing: "0.08em",
+              color: colors.muted,
+            }}
+          >
+            FEEDBACK
+          </Link>
+
+          <Link
+            to="/dashboard"
+            style={{
+              fontFamily: fonts.mono,
+              fontSize: 10,
+              letterSpacing: "0.08em",
+              color: colors.muted,
+            }}
+          >
+            ← DASHBOARD
+          </Link>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
-          {/* Sidebar */}
-          <aside className="space-y-6">
-            <button className="w-full bg-indigo-700 hover:bg-indigo-800 transition-colors text-white rounded-2xl px-6 py-6 text-left flex items-start gap-3">
-              <PenSquare className="w-5 h-5 mt-1 flex-shrink-0" />
-              <span className="font-serif text-xl font-semibold leading-snug">
-                Create New Story
-              </span>
-            </button>
+      {/* Profile */}
+      <ProfileHeader
+        user={user}
+        editing={editing}
+        setEditing={setEditing}
+      />
 
-            <div className="bg-neutral-100 rounded-2xl p-6">
-              <h4 className="font-sans text-xs font-semibold tracking-widest text-neutral-500 mb-5">
-                WRITER INSIGHTS
-              </h4>
-              <div className="grid grid-cols-2 gap-y-5">
-                <div>
-                  <div className="font-serif text-2xl font-semibold text-indigo-700">
-                    24
-                  </div>
-                  <div className="font-sans text-xs text-neutral-500 mt-1">
-                    Published
-                  </div>
-                </div>
-                <div>
-                  <div className="font-serif text-2xl font-semibold text-amber-700">
-                    12.8k
-                  </div>
-                  <div className="font-sans text-xs text-neutral-500 mt-1">
-                    Total Views
-                  </div>
-                </div>
-                <div>
-                  <div className="font-serif text-2xl font-semibold text-neutral-900">
-                    842
-                  </div>
-                  <div className="font-sans text-xs text-neutral-500 mt-1">
-                    Followers
-                  </div>
-                </div>
-                <div>
-                  <div className="font-serif text-2xl font-semibold text-neutral-900">
-                    4.9
-                  </div>
-                  <div className="font-sans text-xs text-neutral-500 mt-1">
-                    Avg. Rating
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Profile information */}
+      <ProfileInformation
+        user={user}
+        setUser={setUser}
+        editing={editing}
+      />
 
-            <div className="bg-white rounded-2xl p-6">
-              <h4 className="font-sans text-xs font-semibold tracking-widest text-neutral-500 mb-4">
-                RECENT DRAFTS
-              </h4>
-              <div className="space-y-4">
-                {recentDrafts.map((draft) => (
-                  <div key={draft.title}>
-                    <div className="font-serif italic text-neutral-800">
-                      {draft.title}
-                    </div>
-                    <div className="font-sans text-xs text-neutral-400 mt-0.5">
-                      {draft.edited}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
+      {/* Writing stats */}
+      <WritingStats blogs={blogs} />
 
-          {/* Main content */}
-          <div>
-            <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
-              <div>
-                <h1 className="text-5xl font-medium mb-3">My Stories</h1>
-                <p className="font-sans text-neutral-500 leading-relaxed max-w-md">
-                  Curate and manage your intellectual contributions to the
-                  global YOURSPACE archive.
-                </p>
-              </div>
+      {/* Published */}
+      <BlogList blogs={blogs} type="PUBLISHED" />
 
-              <div className="flex items-center bg-neutral-100 rounded-full p-1 font-sans text-sm">
-                <button
-                  onClick={() => setActiveTab("published")}
-                  className={`px-5 py-2 rounded-full transition-colors ${
-                    activeTab === "published"
-                      ? "bg-white shadow-sm font-medium text-neutral-900"
-                      : "text-neutral-500 hover:text-neutral-800"
-                  }`}
-                >
-                  Published
-                </button>
-                <button
-                  onClick={() => setActiveTab("drafts")}
-                  className={`px-5 py-2 rounded-full transition-colors ${
-                    activeTab === "drafts"
-                      ? "bg-white shadow-sm font-medium text-neutral-900"
-                      : "text-neutral-500 hover:text-neutral-800"
-                  }`}
-                >
-                  Drafts
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-5">
-              {stories.map((story) =>
-                activeTab === "published" ? (
-                  <PublishedCard key={story.id} story={story} />
-                ) : (
-                  <DraftCard key={story.id} story={story} />
-                )
-              )}
-              {stories.length === 0 && (
-                <div className="bg-white rounded-2xl border border-neutral-100 p-12 text-center font-sans text-neutral-400">
-                  No stories here yet.
-                </div>
-              )}
-            </div>
-
-            {activeTab === "published" && (
-              <div className="flex justify-center mt-10">
-                <button className="font-sans text-sm font-medium bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-full px-6 py-2.5">
-                  Load Older Stories
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-neutral-200 mt-10">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between flex-wrap gap-4">
-          <span className="text-lg font-bold tracking-tight">YOURSPACE</span>
-
-          <nav className="flex items-center gap-6 font-sans text-sm text-neutral-600">
-            <a href="#" className="hover:text-neutral-900">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              Terms
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              About
-            </a>
-            <a href="#" className="hover:text-neutral-900">
-              Contact
-            </a>
-          </nav>
-
-          <span className="font-sans text-xs text-neutral-400">
-            © 2024 YOURSPACE Editorial. All rights reserved.
-          </span>
-        </div>
-      </footer>
+      {/* Drafts */}
+      <BlogList blogs={blogs} type="DRAFT" />
     </div>
   );
 }
