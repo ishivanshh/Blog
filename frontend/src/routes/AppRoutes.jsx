@@ -16,9 +16,6 @@ import NotFound from "../pages/NotFound";
 import Explore from "../pages/Explore";
 import Feedback from "../pages/Feedback";
 const router = createBrowserRouter([
-  // =========================
-  // MAIN LAYOUT
-  // =========================
   {
     path: "/",
     element: <AuthLayout />,

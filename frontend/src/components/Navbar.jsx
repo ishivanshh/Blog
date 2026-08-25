@@ -17,10 +17,10 @@ const fonts = {
 };
 
 const NAV_LINKS = [
-  { label: "HOME", to: "/home" },
+  { label: "HOME", to: "/" },
   { label: "EXPLORE", to: "/explore" },
-  { label: "CATEGORIES", to: "/categories" },
-  { label: "WRITE", to: "/write" },
+  { label: "CATEGORIES", to: "/notfound" },
+  { label: "WRITE", to: "/writeblog" },
 ];
 
 /**

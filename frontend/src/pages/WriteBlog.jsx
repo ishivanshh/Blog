@@ -69,9 +69,11 @@ export default function YourSpaceWritePage() {
       <header className="border-b" style={{ borderColor: colors.hairline, backgroundColor: colors.bg }}>
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5">
           <div className="flex items-center gap-4">
-            <span style={{ fontFamily: fonts.mono, fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: colors.ink }}>
-              YOURSPACE
-            </span>
+            <Link to="/">
+              <span style={{ fontFamily: fonts.mono, fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: colors.ink }}>
+                YOURSPACE
+              </span>
+            </Link>
             <div className="w-px h-5" style={{ backgroundColor: colors.hairline }} />
             <span style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: colors.muted }}>
               DRAFTING
@@ -80,14 +82,14 @@ export default function YourSpaceWritePage() {
 
           <nav className="flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
             <Link
-              to="/home"
+              to="/explore"
               style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}
               className="hover:opacity-70 transition-opacity"
             >
               EXPLORE
             </Link>
-            <a
-              href="#"
+            <Link
+              to="/writeblog"
               style={{
                 fontFamily: fonts.mono,
                 fontSize: 11,
@@ -99,7 +101,7 @@ export default function YourSpaceWritePage() {
               }}
             >
               WRITE
-            </a>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-5 order-2 md:order-3">
