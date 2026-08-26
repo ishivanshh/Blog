@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authservice";
 
 // Awwwards-editorial theme: white/cream ground, giant faint serif
 // wordmark as texture, monospace uppercase labels, hairline underlines,
@@ -88,20 +90,42 @@ function UnderlineField({ label, type, value, onChange, error, showToggle, visib
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const next = {};
-    if (!email) next.email = "Required.";
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) next.email = "Required.";
     if (!password) next.password = "Required.";
     setErrors(next);
-    if (Object.keys(next).length === 0) setSubmitted(true);
+
+    if (Object.keys(next).length > 0) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await loginUser({ email: trimmedEmail, password });
+      const accessToken = response.data?.accessToken;
+
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
+      }
+
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      setErrors({
+        form: error.response?.data?.message || "Unable to authenticate. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -138,16 +162,17 @@ export default function Login() {
 
         {/* Right: auth card */}
         <div className="w-full flex justify-center lg:justify-end">
-          <div className="w-full max-w-[380px] p-6 sm:p-8" style={{ backgroundColor: colors.card }}>
-            {submitted ? (
-              <div className="py-10 text-center">
-                <p style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.1em" }}>ACCESS GRANTED</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate>
+          <div className="w-full max-w-95 p-6 sm:p-8" style={{ backgroundColor: colors.card }}>
+            <form onSubmit={handleSubmit} noValidate>
                 <p className="mb-8" style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.14em", color: colors.ink, borderBottom: `1px solid ${colors.hairline}`, paddingBottom: 10 }}>
                   AUTHENTICATION
                 </p>
+
+                {errors.form && (
+                  <p className="mb-6" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+                    {errors.form}
+                  </p>
+                )}
 
                 <UnderlineField label="EMAIL ADDRESS" type="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
                 <UnderlineField
@@ -179,10 +204,11 @@ export default function Login() {
 
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full flex items-center justify-between px-5 py-4 hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: colors.accent, color: colors.ink }}
+                  style={{ backgroundColor: colors.accent, color: colors.ink, opacity: isSubmitting ? 0.6 : 1 }}
                 >
-                  <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em" }}>AUTHENTICATE</span>
+                  <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em" }}>{isSubmitting ? "AUTHENTICATING..." : "AUTHENTICATE"}</span>
                   <span style={{ fontFamily: fonts.mono, fontSize: 15 }}>→</span>
                 </button>
 
@@ -192,8 +218,7 @@ export default function Login() {
                     Create an Acoount
                   </a>
                 </p>
-              </form>
-            )}
+            </form>
           </div>
         </div>
       </main>

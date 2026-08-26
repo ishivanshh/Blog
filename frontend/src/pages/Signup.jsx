@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../services/authservice";
 
 const colors = {
   bg: "#fafaf8",
@@ -86,24 +88,48 @@ function UnderlineField({ label, type, value, onChange, error, showToggle, visib
 
 export default function Signup() {
   // const [avatar, setAvatar] = useState(null);
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const next = {};
-    if (!name) next.name = "Required.";
-    if (!username) next.username = "Required.";
-    else if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) next.username = "3–20 chars: letters, numbers, _.";
-    if (!email) next.email = "Required.";
+    const trimmedName = name.trim();
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) next.name = "Required.";
+    if (!trimmedUsername) next.username = "Required.";
+    else if (!/^[a-zA-Z0-9_]{3,20}$/.test(trimmedUsername)) next.username = "3–20 chars: letters, numbers, _.";
+    if (!trimmedEmail) next.email = "Required.";
     if (password.length < 8) next.password = "Min. 8 characters.";
     setErrors(next);
-    if (Object.keys(next).length === 0) setSubmitted(true);
+
+    if (Object.keys(next).length > 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await registerUser({
+        fullName: trimmedName,
+        username: trimmedUsername,
+        email: trimmedEmail,
+        password,
+      });
+      navigate("/login", { replace: true });
+    } catch (error) {
+      setErrors({
+        form: error.response?.data?.message || "Unable to create your account. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -141,17 +167,17 @@ export default function Signup() {
         </div>
 
         {/* Right: form */}
-        <div className="w-full max-w-[420px]">
+        <div className="w-full max-w-105">
           <p style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 26, marginBottom: 32, color: colors.muted, opacity: 0.9 }}>
             Create Account
           </p>
 
-          {submitted ? (
-            <div className="py-10">
-              <p style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.1em" }}>PROFILE INITIALIZED</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit} noValidate>
+              {errors.form && (
+                <p className="mb-6" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+                  {errors.form}
+                </p>
+              )}
 
 
               <UnderlineField label="FULL NAME" type="text" value={name} onChange={(e) => setName(e.target.value)} error={errors.name} />
@@ -170,11 +196,12 @@ export default function Signup() {
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full flex items-center justify-between px-5 py-4 mt-4 border hover:bg-black hover:text-white transition-colors"
-                style={{ borderColor: colors.accent, color: colors.ink, backgroundColor: "transparent" }}
+                style={{ borderColor: colors.accent, color: colors.ink, backgroundColor: "transparent", opacity: isSubmitting ? 0.6 : 1 }}
               >
                 <span style={{ fontFamily: fonts.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em" }}>
-                  INITIALIZE PROFILE
+                  {isSubmitting ? "INITIALIZING..." : "INITIALIZE PROFILE"}
                 </span>
                 <span style={{ fontFamily: fonts.mono, fontSize: 15 }}>→</span>
               </button>
@@ -195,8 +222,7 @@ export default function Signup() {
                   AUTHENTICATE HERE.
                 </a>
               </p>
-            </form>
-          )}
+          </form>
         </div>
       </main>
     </div>
