@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-
+import NavbarCentered from "../components/loggnavbar.jsx";
 import Footer from "../components/Footer.jsx"
 
 const colors = {
@@ -44,94 +44,6 @@ function Wordmark() {
   );
 }
 
-function Nav({ user }) {
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <header
-      className="relative z-10 flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5 md:py-6"
-      style={{ borderBottom: `1px solid ${colors.hairline}` }}
-    >
-      <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
-        YOURSPACE
-      </span>
-      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start">
-        {[
-          { label: "HOME", href: "/dashboard" },
-          { label: "EXPLORE", href: "/explore" },
-          { label: "MY BLOGS", href: "/myblog" },
-        ].map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.href}
-            style={({ isActive }) => ({
-              fontFamily: fonts.mono,
-              fontSize: 11,
-              letterSpacing: "0.1em",
-              color: isActive ? colors.ink : colors.muted,
-              borderBottom: isActive
-                ? `1px solid ${colors.ink}`
-                : "none",
-              paddingBottom: 2,
-            })}
-          >
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="relative order-2 md:order-3">
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-3"
-          aria-label="Open profile menu"
-        >
-          <div className="w-9 h-9 overflow-hidden rounded-full shrink-0" style={{ backgroundColor: colors.faint, border: `1px solid ${colors.hairline}` }}>
-            {user.avatar ? (
-              <img src={user.avatar} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span className="flex items-center justify-center h-full material-symbols-outlined" style={{ fontSize: 18, color: colors.muted }}>
-                person
-              </span>
-            )}
-          </div>
-          <span className="hidden sm:block text-left">
-            <span className="block" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.08em", color: colors.ink }}>
-              {user.name.toUpperCase()}
-            </span>
-            <span className="block" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.08em", color: colors.muted }}>
-              @{user.username}
-            </span>
-          </span>
-        </button>
-
-        {open && (
-          <div
-            className="absolute right-0 mt-3 min-w-[180px] py-2"
-            style={{ backgroundColor: colors.bg, border: `1px solid ${colors.hairline}` }}
-          >
-            <a href="/profile" className="block px-4 py-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.ink }}>
-              PROFILE
-            </a>
-            <a href="#" className="block px-4 py-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.ink }}>
-              EXPLORE
-            </a>
-            <a href="/writeblog" className="block px-4 py-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.ink }}>
-              WRITE
-            </a>
-            <a href="/myblog" className="block px-4 py-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.ink }}>
-              MY BLOGS
-            </a>
-            <a href="/" className="block px-4 py-2" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
-              LOG OUT
-            </a>
-          </div>
-        )}
-      </div>
-    </header>
-  );
-}
 function WritingStats() {
   const stats = [
     {
@@ -975,6 +887,7 @@ export default function Dashboard() {
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <Wordmark />
       <div className="relative z-10">
+        <NavbarCentered/>
 
         <Hero user={user} />
 
