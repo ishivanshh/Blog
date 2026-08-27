@@ -8,7 +8,6 @@ const api = axios.create({
   },
 });
 
-// Attach access token to protected requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");

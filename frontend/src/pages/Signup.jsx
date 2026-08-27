@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../services/authservice";
+import { registerUser } from "../services/authService";
 
 const colors = {
   bg: "#fafaf8",
@@ -116,13 +116,23 @@ export default function Signup() {
 
     setIsSubmitting(true);
     try {
-      await registerUser({
+      const response = await registerUser({
         fullName: trimmedName,
         username: trimmedUsername,
         email: trimmedEmail,
         password,
       });
-      navigate("/login", { replace: true });
+      const accessToken = response.data?.accessToken;
+      const user = response.data?.user;
+
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
+      }
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrors({
         form: error.response?.data?.message || "Unable to create your account. Please try again.",

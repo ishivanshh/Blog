@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getBlogs } from "../services/blogService";
 
 const colors = {
   bg: "#fafaf8",
@@ -445,64 +446,34 @@ function EmptyState({ isDraft }) {
 ------------------------------------------------------- */
 
 export default function MyBlogs() {
-  /*
-   * TEMPORARY DATA
-   *
-   * Replace this with your backend API later.
-   *
-   * GET /api/v1/blogs
-   */
+  const [blogs, setBlogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const blogs = [
-    {
-      id: "1",
-      title: "Understanding Uber Functionality",
-      category: "SYSTEM DESIGN",
-      excerpt:
-        "Breaking down the architecture, services, and request flow behind a large-scale ride sharing platform.",
-      status: "Published",
-      date: "AUG 20, 2026",
-      readTime: "8 MIN READ",
-    },
-    {
-      id: "2",
-      title: "Authentication with Axios",
-      category: "WEB DEVELOPMENT",
-      excerpt:
-        "Understanding how frontend and backend authentication work together using Axios and protected routes.",
-      status: "Published",
-      date: "AUG 12, 2026",
-      readTime: "6 MIN READ",
-    },
-    {
-      id: "3",
-      title: "Understanding React Router",
-      category: "REACT",
-      excerpt:
-        "A practical look at layouts, nested routes, protected pages, and route-based application architecture.",
-      status: "Published",
-      date: "AUG 07, 2026",
-      readTime: "7 MIN READ",
-    },
-    {
-      id: "4",
-      title: "Building a Blog Backend",
-      category: "NODE / EXPRESS",
-      excerpt:
-        "Working through the backend architecture for a full-stack blogging platform.",
-      status: "Draft",
-      date: "AUG 24, 2026",
-    },
-    {
-      id: "5",
-      title: "Understanding MongoDB Indexing",
-      category: "DATABASE",
-      excerpt:
-        "Notes and experiments around indexing and query performance.",
-      status: "Draft",
-      date: "AUG 22, 2026",
-    },
-  ];
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await getBlogs({ limit: 50 });
+        const results = Array.isArray(response.data?.blogs) ? response.data.blogs : [];
+        setBlogs(results.map((blog) => ({
+          ...blog,
+          id: blog._id,
+          category: blog.category?.name || "UNCATEGORIZED",
+          status: blog.status === "Published" ? "Published" : "Draft",
+          date: blog.createdAt
+            ? new Date(blog.createdAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase()
+            : "",
+          readTime: blog.content ? `${Math.max(1, Math.ceil(blog.content.trim().split(/\s+/).length / 200))} MIN READ` : "",
+        })));
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || "Unable to load your blogs.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   const publishedBlogs = blogs.filter(
     (blog) => blog.status === "Published"
@@ -642,6 +613,17 @@ export default function MyBlogs() {
 
       {/* Stats */}
       <BlogStats blogs={blogs} />
+
+      {isLoading && (
+        <p className="px-5 sm:px-8 md:px-14 pb-8" style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted }}>
+          LOADING BLOGS...
+        </p>
+      )}
+      {error && (
+        <p className="px-5 sm:px-8 md:px-14 pb-8" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+          {error}
+        </p>
+      )}
 
       {/* Published */}
       <BlogSection

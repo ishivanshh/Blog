@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authservice";
+import { loginUser } from "../services/authService";
 
 // Awwwards-editorial theme: white/cream ground, giant faint serif
 // wordmark as texture, monospace uppercase labels, hairline underlines,
@@ -111,11 +111,15 @@ export default function Login() {
 
     setIsSubmitting(true);
     try {
-      const response = await loginUser({ email: trimmedEmail, password });
+      const response = await loginUser({ username: trimmedEmail, password });
       const accessToken = response.data?.accessToken;
+      const user = response.data?.user;
 
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
+      }
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
       }
 
       navigate("/dashboard", { replace: true });

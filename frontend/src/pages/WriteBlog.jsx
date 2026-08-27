@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -10,7 +10,9 @@ import {
   MoreVertical,
   Camera,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getCategories } from "../services/categoryService.js";
+import { createBlog } from "../services/blogService.js";
 
 // Same tokens as HomeAwwwards / LoginAwwwards / SignupAwwwards / NotFoundAwwwards.
 const colors = {
@@ -26,12 +28,32 @@ const fonts = {
   display: "'Fraunces', serif",
   mono: "'Space Mono', monospace",
 };
-
 export default function YourSpaceWritePage() {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
   const [coverPhoto, setCoverPhoto] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(Array.isArray(response.data) ? response.data : []);
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || "Failed to load categories.");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const wordCount = useMemo(() => {
     const text = `${title} ${content}`.trim();
@@ -43,6 +65,33 @@ export default function YourSpaceWritePage() {
     const file = e.target.files?.[0];
     if (file) {
       setCoverPhoto(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (status) => {
+    setError("");
+    if (!title.trim() || !content.trim() || !category) {
+      setError("Title, content, and category are required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await createBlog({
+        title: title.trim(),
+        subtitle: "",
+        content: content.trim(),
+        category,
+        tags: [],
+        status,
+        visibility: "Public",
+        publish: status === "Published",
+      });
+      navigate("/myblog", { replace: true });
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Unable to save your blog.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -206,6 +255,18 @@ export default function YourSpaceWritePage() {
             >
               DRAFT
             </span>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              disabled={loadingCategories || isSubmitting}
+              className="px-2.5 py-1 outline-none"
+              style={{ fontFamily: fonts.mono, fontSize: 10, color: colors.muted, backgroundColor: colors.faint, border: `1px solid ${colors.hairline}` }}
+            >
+              <option value="">{loadingCategories ? "LOADING CATEGORIES" : "SELECT CATEGORY"}</option>
+              {categories.map((item) => (
+                <option key={item._id} value={item._id}>{item.name}</option>
+              ))}
+            </select>
             <span
               className="px-2.5 py-1"
               style={{ fontFamily: fonts.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", backgroundColor: colors.faint, color: colors.muted, border: `1px solid ${colors.hairline}` }}
@@ -213,6 +274,11 @@ export default function YourSpaceWritePage() {
               {wordCount} {wordCount === 1 ? "WORD" : "WORDS"}
             </span>
           </div>
+          {error && (
+            <p className="mt-3" role="alert" style={{ fontFamily: fonts.mono, fontSize: 10, color: "#c23b3b" }}>
+              {error}
+            </p>
+          )}
           <div className="border-b" style={{ borderColor: colors.hairline }} />
         </div>
 
@@ -254,16 +320,22 @@ export default function YourSpaceWritePage() {
 
           <div className="flex items-center gap-6">
             <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => handleSubmit("Draft")}
               className="transition-opacity hover:opacity-70"
               style={{ fontFamily: fonts.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: colors.ink }}
             >
-              SAVE DRAFT
+              {isSubmitting ? "SAVING..." : "SAVE DRAFT"}
             </button>
             <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => handleSubmit("Published")}
               className="px-6 py-2.5 hover:opacity-90 transition-opacity"
               style={{ fontFamily: fonts.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", backgroundColor: colors.accent, color: colors.ink }}
             >
-              PUBLISH
+              {isSubmitting ? "SAVING..." : "PUBLISH"}
             </button>
           </div>
         </div>

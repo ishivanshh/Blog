@@ -1,5 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
+import { getProfile, logoutUser } from "../services/authService";
+import { getBlogs } from "../services/blogService";
+
 
 const colors = {
   bg: "#fafaf8",
@@ -9,6 +13,7 @@ const colors = {
   hairline: "#d6d6d3",
   accent: "#e3ff4f",
 };
+
 
 const fonts = {
   display: "'Fraunces', serif",
@@ -676,65 +681,81 @@ function BlogList({ blogs, type }) {
   );
 }
 
+
 export default function Profile() {
+  const navigate = useNavigate();
+
+  const storedUser = localStorage.getItem("user");
+
+  const parsedUser = storedUser
+    ? JSON.parse(storedUser)
+    : null;
 
   const [user, setUser] = React.useState({
-    name: "Shivansh Saxena",
-    username: "shivansh",
-    email: "shivansh@example.com",
-    bio: "Engineering student writing about software, AI, web development, and system design.",
-    avatar: null,
+    name: parsedUser?.fullName || "",
+    username: parsedUser?.username || "",
+    email: parsedUser?.email || "",
+    bio: parsedUser?.bio || "",
+    avatar: parsedUser?.profilePicture || null,
   });
 
   const [editing, setEditing] = React.useState(false);
+  const [profileError, setProfileError] = React.useState("");
+  const [blogs, setBlogs] = React.useState([]);
 
-  const blogs = [
-    {
-      id: "1",
-      title: "Understanding Uber Functionality",
-      category: "SYSTEM DESIGN",
-      excerpt:
-        "Breaking down the architecture and services behind a large-scale ride sharing platform.",
-      status: "PUBLISHED",
-      date: "AUG 20, 2026",
-    },
-    {
-      id: "2",
-      title: "Authentication with Axios",
-      category: "WEB DEVELOPMENT",
-      excerpt:
-        "Understanding how frontend and backend authentication work together using Axios.",
-      status: "PUBLISHED",
-      date: "AUG 12, 2026",
-    },
-    {
-      id: "3",
-      title: "Understanding React Router",
-      category: "REACT",
-      excerpt:
-        "Layouts, nested routes, protected routes, and application navigation.",
-      status: "PUBLISHED",
-      date: "AUG 07, 2026",
-    },
-    {
-      id: "4",
-      title: "Building a Blog Backend",
-      category: "NODE / EXPRESS",
-      excerpt:
-        "Working through the backend architecture for a full-stack blogging platform.",
-      status: "DRAFT",
-      date: "AUG 23, 2026",
-    },
-    {
-      id: "5",
-      title: "Understanding MongoDB Indexing",
-      category: "DATABASE",
-      excerpt:
-        "Notes and experiments around indexing and query performance.",
-      status: "DRAFT",
-      date: "AUG 21, 2026",
-    },
-  ];
+  React.useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const [profileResponse, blogsResponse] = await Promise.all([
+          getProfile(),
+          getBlogs({ limit: 50 }),
+        ]);
+        const profile = profileResponse.data?.user;
+        if (profile) {
+          const nextUser = {
+            name: profile.fullName || "",
+            username: profile.username || "",
+            email: profile.email || "",
+            bio: profile.bio || "",
+            avatar: profile.profilePicture || null,
+          };
+          setUser(nextUser);
+          localStorage.setItem("user", JSON.stringify(profile));
+        }
+        setBlogs(Array.isArray(blogsResponse.data?.blogs) ? blogsResponse.data.blogs.map((blog) => ({
+          ...blog,
+          id: blog._id,
+          category: blog.category?.name || "UNCATEGORIZED",
+          status: blog.status === "Published" ? "PUBLISHED" : "DRAFT",
+          date: blog.createdAt
+            ? new Date(blog.createdAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase()
+            : "",
+        })) : []);
+      } catch (requestError) {
+        if (requestError.response?.status === 401) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("user");
+          navigate("/login", { replace: true });
+          return;
+        }
+        setProfileError(requestError.response?.data?.message || "Unable to load your profile.");
+      }
+    };
+
+    loadProfile();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
+  };
 
   return (
     <div
@@ -808,6 +829,12 @@ export default function Profile() {
         setEditing={setEditing}
       />
 
+      {profileError && (
+        <p className="px-5 sm:px-8 md:px-14 pb-6" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+          {profileError}
+        </p>
+      )}
+
       {/* Profile information */}
       <ProfileInformation
         user={user}
@@ -823,6 +850,8 @@ export default function Profile() {
 
       {/* Drafts */}
       <BlogList blogs={blogs} type="DRAFT" />
+
+  
     </div>
   );
 }
