@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer";
+import { getBlogs } from "../services/blogService";
 
 // Same tokens as the rest of the Awwwards-themed YOURSPACE pages.
 const colors = {
@@ -17,98 +18,7 @@ const fonts = {
   mono: "'Space Mono', monospace",
 };
 
-const CATEGORIES = ["ALL", "TECHNOLOGY", "AI & ML", "WEB DEVELOPMENT", "DESIGN", "PRODUCTIVITY"];
-
-// "size" controls the bento footprint: large spans 2x2, wide spans 2x1,
-// tall spans 1x2, normal is a single cell. Cycled across the list below
-// so the grid reads as intentionally uneven rather than random.
-const POSTS = [
-  {
-    size: "large",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB7j2qiepaKDqRRZIuDgLwFgJX5ZCI-ITo0lkp1zyQFjwpIKVnfvROTxEH2WaAsQYg_3qhYOUf7U18tHQGJzdV8rQOJHiyfDivYr0tGc9CFORqnANb6Kj3Z5vpKRtgNyPdRH46k5ytO7yXK8JTqPOHlcTCjh9s-WzdDI4t4O1sqzhgnE2XV24AY1kTr2Ah7LeSe79EEnrtpncekPdY9dWYthBzF1LId65-U-unxdDWUQeNe_KxUMJi4",
-    category: "Technology",
-    title: "The Future of Generative Interfaces in Editorial Design",
-    excerpt: "Exploring how AI-driven layouts are reshaping the way we consume long-form content on the web.",
-    author: "Sarah Jenkins",
-    readTime: "5 MIN",
-  },
-  {
-    size: "normal",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBit4PQzXK5SjF-Bn6md18fEidpL7hJye3pUybuQCFsiCWYd3o8lEy1zsmIOCDS6_4L66YjCN9IkrK6HCRFKFIuAhxy_-2xXdJiIVF936VxFTRmslkxpKyBDaUCo1SNHAnbCyEWmSihT-TSTDgyEvBQHCR9eJKjNPm-zqPPxSAYLop2DlXSUH23z3kXBtXasRiaKn3lLaptP-OIEgMNw9egibVbO9yfqfQ5bbTTjYvY8RMqNvvLc1Di",
-    category: "Productivity",
-    title: "Finding Focus in a World of Noise",
-    excerpt: "Practical strategies for deep work and eliminating digital distractions.",
-    author: "David Chen",
-    readTime: "3 MIN",
-  },
-  {
-    size: "tall",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCb9bixrZ-il6igmMG5YTVnkKPVLoy4fLxWcnrR90fkpQpof6yk-IywEUItOWIEzW4blL8ctGLGHHzIBv_pZkg64XBcOP_8Uj7y59C5Eqg1Lnqk9KzH6x_R6wQAKr2wejyEomMDF44Sa3Dojur2bsCa2PEqoOvHqnltlqkvDxIVsc0aGgTX9efS7_W4xbyj3ofAG3YOG6dGapsgD3t6FmGAWSPu4_5-ytfBYNFKs71JulMIlDDHBhfo",
-    category: "Web Development",
-    title: "The Elegance of Vanilla CSS",
-    excerpt: "Why returning to the basics of cascading style sheets leads to cleaner, more maintainable codebases.",
-    author: "Elena Rostova",
-    readTime: "7 MIN",
-  },
-  {
-    size: "normal",
-    image: null,
-    category: "AI & ML",
-    title: "Demystifying Large Language Models",
-    excerpt: "A plain-English explanation of how modern AI text generation works under the hood.",
-    author: "Marcus Thorne",
-    readTime: "12 MIN",
-  },
-  {
-    size: "wide",
-    image:
-      "https://images.unsplash.com/photo-1558655146-d09347e92766?w=900&q=80",
-    category: "Design",
-    title: "Grid Systems for the Post-Screen Era",
-    excerpt: "Rethinking layout foundations as reading moves across devices, sizes, and formats.",
-    author: "Priya Nair",
-    readTime: "6 MIN",
-  },
-  {
-    size: "normal",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=700&q=80",
-    category: "Technology",
-    title: "Edge Computing, Explained Simply",
-    excerpt: "What actually changes when computation moves closer to the user.",
-    author: "Owen Blake",
-    readTime: "4 MIN",
-  },
-  {
-    size: "normal",
-    image: null,
-    category: "Productivity",
-    title: "The Two-Hour Rule for Deep Work",
-    excerpt: "A simple constraint that reshaped how I structure every writing day.",
-    author: "Nadia Farouk",
-    readTime: "5 MIN",
-  },
-  {
-    size: "tall",
-    image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=700&q=80",
-    category: "AI & ML",
-    title: "Prompt Design as a Craft, Not a Trick",
-    excerpt: "Treating prompts like editorial briefs instead of magic incantations.",
-    author: "Leo Marsh",
-    readTime: "9 MIN",
-  },
-  {
-    size: "normal",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=700&q=80",
-    category: "Design",
-    title: "Typography as Interface",
-    excerpt: "How type choices quietly do the job of navigation.",
-    author: "Iris Wang",
-    readTime: "6 MIN",
-  },
-];
+const SIZE_SEQUENCE = ["large", "normal", "tall", "normal", "wide", "normal", "normal", "tall", "normal"];
 
 const SIZE_CLASSES = {
   large: "sm:col-span-2 sm:row-span-2",
@@ -123,6 +33,22 @@ const SIZE_HEIGHT = {
   tall: "h-[260px] sm:h-full",
   normal: "h-[220px] sm:h-full",
 };
+
+const getReadTime = (content = "") => {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(words / 200))} MIN`;
+};
+
+const normalizeBlog = (blog, index) => ({
+  id: blog._id || blog.id,
+  size: SIZE_SEQUENCE[index % SIZE_SEQUENCE.length],
+  image: blog.coverImage || null,
+  category: typeof blog.category === "string" ? blog.category : blog.category?.name || "Uncategorized",
+  title: blog.title,
+  excerpt: blog.excerpt || blog.subtitle || blog.content?.slice(0, 160) || "",
+  author: blog.author?.fullName || blog.author?.username || "YOURSPACE",
+  readTime: blog.readingTime ? `${blog.readingTime} MIN` : getReadTime(blog.content),
+});
 
 function Wordmark() {
   return (
@@ -152,11 +78,11 @@ function Wordmark() {
   );
 }
 
-function Hero() {
+function Hero({ total }) {
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 pt-14 sm:pt-20 pb-10">
       <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", color: colors.muted }}>
-        ARCHIVE — {POSTS.length} ENTRIES
+        ARCHIVE — {total} ENTRIES
       </span>
       <h1
         className="mt-4 mb-2"
@@ -171,7 +97,7 @@ function Hero() {
   );
 }
 
-function SearchAndFilter({ query, setQuery, category, setCategory }) {
+function SearchAndFilter({ query, setQuery, category, setCategory, categories }) {
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 pb-8">
       <div className="flex items-center gap-3 border-b pb-3 mb-6" style={{ borderColor: colors.hairline }}>
@@ -197,7 +123,7 @@ function SearchAndFilter({ query, setQuery, category, setCategory }) {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {CATEGORIES.map((c) => {
+        {categories.map((c) => {
           const isActive = c === category;
           return (
             <button
@@ -234,12 +160,12 @@ function PostCard({ post }) {
         <img
           src={post.image}
           alt={post.title}
-          className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
-            NO IMAGE
+            Loading..
           </span>
         </div>
       )}
@@ -283,6 +209,7 @@ function PostCard({ post }) {
   );
 }
 
+// when your search failed and u dont find anything 
 function EmptyState({ onClear }) {
   return (
     <div className="py-24 text-center">
@@ -306,19 +233,44 @@ function EmptyState({ onClear }) {
   );
 }
 
+
+
+
+
+
 export default function Explore() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("ALL");
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadBlogs = async () => {
+      try {
+        const response = await getBlogs({ limit: 50, sortBy: "createdAt", order: "desc" });
+        setPosts(Array.isArray(response.data?.blogs) ? response.data.blogs.map(normalizeBlog) : []);
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || "Unable to load blogs.");
+      }
+    };
+
+    loadBlogs();
+  }, []);
+
+  const categories = useMemo(() => {
+    const names = posts.map((post) => post.category.toUpperCase());
+    return ["ALL", ...Array.from(new Set(names))];
+  }, [posts]);
 
   const filtered = useMemo(() => {
-    return POSTS.filter((p) => {
+    return posts.filter((p) => {
       const matchesCategory = category === "ALL" || p.category.toUpperCase() === category;
       const q = query.trim().toLowerCase();
       const matchesQuery =
         !q || p.title.toLowerCase().includes(q) || p.author.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
       return matchesCategory && matchesQuery;
     });
-  }, [query, category]);
+  }, [posts, query, category]);
 
   return (
     <div className="min-h-screen relative overflow-hidden antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
@@ -334,9 +286,21 @@ export default function Explore() {
       <Wordmark />
 
       <div className="relative z-10">
-        <Navbar active="/explore" />
-        <Hero />
-        <SearchAndFilter query={query} setQuery={setQuery} category={category} setCategory={setCategory} />
+        <Navbar
+  active="/explore"
+  showHome
+  showExplore
+  showCategories={false}
+  showWrite={false}
+/>
+
+        <Hero total={posts.length} />
+        <SearchAndFilter query={query} setQuery={setQuery} category={category} setCategory={setCategory} categories={categories} />
+        {error && (
+          <p className="px-5 sm:px-8 md:px-14 pb-8" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+            {error}
+          </p>
+        )}
 
         <section className="relative z-10 px-5 sm:px-8 md:px-14 pb-16">
           {filtered.length === 0 ? (
@@ -344,7 +308,7 @@ export default function Explore() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:auto-rows-[180px]">
               {filtered.map((post) => (
-                <PostCard key={post.title} post={post} />
+                <PostCard key={post.id || post.title} post={post} />
               ))}
             </div>
           )}

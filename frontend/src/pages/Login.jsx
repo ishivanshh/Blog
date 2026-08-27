@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
-
+import Navbar from "../components/Navbar";
+import { publicNav } from "../utils/navigation";
 // Awwwards-editorial theme: white/cream ground, giant faint serif
 // wordmark as texture, monospace uppercase labels, hairline underlines,
 // lime-yellow accent action.
@@ -138,14 +139,21 @@ export default function Login() {
 
       <Wordmark />
 
-      <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 md:px-14 py-6">
+      <Navbar navItems = {publicNav}
+  active="/login"
+  showHome
+  showExplore
+  showCategories={false}
+  showWrite={false}
+/>
+      {/* <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 md:px-14 py-6">
         <span style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.14em", color: colors.muted }}>
           YOURSPACE
         </span>
         <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
           01 / AUTH
         </span>
-      </header>
+      </header> */}
 
       <main className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 px-5 sm:px-8 md:px-14 pt-10 pb-20 items-center lg:min-h-[80vh]">
         {/* Left: editorial copy */}

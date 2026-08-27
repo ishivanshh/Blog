@@ -19,6 +19,14 @@ export const getBlogs = async (params = {}) => {
   return response.data;
 };
 
+export const getMyBlogs = async (params = {}) => {
+  const response = await api.get("/blogs/my", {
+    params,
+  });
+
+  return response.data;
+};
+
 /**
  * Get single blog by ID
  */

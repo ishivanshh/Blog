@@ -3,8 +3,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 import NavbarCentered from "../components/loggnavbar.jsx";
 import Footer from "../components/Footer.jsx";
 import { getProfile } from "../services/authService";
-import { getBlogs } from "../services/blogService";
+import { getMyBlogs } from "../services/blogService";
 import { getCategories } from "../services/categoryService";
+import Navbar from "../components/Navbar.jsx";
+import { userNav } from "../utils/navigation.js";
+
+
 
 const colors = {
   bg: "#fafaf8",
@@ -448,44 +452,44 @@ function MyRecentBlogs({ blogs }) {
   );
 }
 
-function BottomNavBar() {
-  const items = [
-    { icon: "home", label: "Home", href: "/dashboard" },
-    { icon: "explore", label: "Explore", href: "/explore" },
-    { icon: "edit_square", label: "Write", href: "/writeblog" },
-    { icon: "person", label: "Profile", href: "/profile" },
-  ];
+// function BottomNavBar() {
+//   const items = [
+//     { icon: "home", label: "Home", href: "/dashboard" },
+//     { icon: "explore", label: "Explore", href: "/explore" },
+//     { icon: "edit_square", label: "Write", href: "/writeblog" },
+//     { icon: "person", label: "Profile", href: "/profile" },
+//   ];
 
-  return (
-    <nav
-      className="fixed bottom-0 left-0 w-full flex justify-around items-center py-2.5 px-4 z-50 md:hidden"
-      style={{ backgroundColor: colors.bg, borderTop: `1px solid ${colors.hairline}` }}
-    >
-      {items.map((item) => (
-        <NavLink
-          key={item.label}
-          to={item.href}
-          className="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
-          style={({ isActive }) => ({ color: isActive ? colors.ink : colors.muted })}
-        >
-          {({ isActive }) => (
-            <>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 22, ...(isActive ? { fontVariationSettings: "'FILL' 1" } : {}) }}
-              >
-                {item.icon}
-              </span>
-              <span style={{ fontFamily: fonts.mono, fontSize: 9, letterSpacing: "0.06em" }}>
-                {item.label.toUpperCase()}
-              </span>
-            </>
-          )}
-        </NavLink>
-      ))}
-    </nav>
-  );
-}
+//   return (
+//     <nav
+//       className="fixed bottom-0 left-0 w-full flex justify-around items-center py-2.5 px-4 z-50 md:hidden"
+//       style={{ backgroundColor: colors.bg, borderTop: `1px solid ${colors.hairline}` }}
+//     >
+//       {items.map((item) => (
+//         <NavLink
+//           key={item.label}
+//           to={item.href}
+//           className="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
+//           style={({ isActive }) => ({ color: isActive ? colors.ink : colors.muted })}
+//         >
+//           {({ isActive }) => (
+//             <>
+//               <span
+//                 className="material-symbols-outlined"
+//                 style={{ fontSize: 22, ...(isActive ? { fontVariationSettings: "'FILL' 1" } : {}) }}
+//               >
+//                 {item.icon}
+//               </span>
+//               <span style={{ fontFamily: fonts.mono, fontSize: 9, letterSpacing: "0.06em" }}>
+//                 {item.label.toUpperCase()}
+//               </span>
+//             </>
+//           )}
+//         </NavLink>
+//       ))}
+//     </nav>
+//   );
+// }
 
 function Hero({ user }) {
   const firstName = user.name?.trim().split(" ")[0] || "Writer";
@@ -888,7 +892,7 @@ export default function Dashboard() {
       try {
         const [profileResponse, blogsResponse, categoriesResponse] = await Promise.all([
           getProfile(),
-          getBlogs({ limit: 50 }),
+          getMyBlogs({ limit: 50 }),
           getCategories(),
         ]);
         const profile = profileResponse.data?.user;
@@ -922,7 +926,16 @@ export default function Dashboard() {
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <Wordmark />
       <div className="relative z-10">
-        <NavbarCentered/>
+        <Navbar
+  active="/dashboard"
+  authed={true}
+  showHome
+  showExplore={false}
+  showCategories={false}
+  showWrite
+  showMyBlogs
+  showProfile={false}
+/>
 
         <Hero user={user} />
 
@@ -948,7 +961,7 @@ export default function Dashboard() {
 
         <Footer />
       </div>
-      <BottomNavBar />
+    
     </div>
   );
 }

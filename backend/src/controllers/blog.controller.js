@@ -265,5 +265,65 @@ const getAllBlogs = asyncHandler(async (req, res) => {
   );
 });
 
-export { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs };
-export default { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs };
+const getMyBlogs = asyncHandler(async (req, res) => {
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    category,
+    sortBy = "createdAt",
+    order = "desc",
+  } = req.query;
+
+  if (!req.user?._id) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  const parsedPage = Math.max(1, Number(page) || 1);
+  const parsedLimit = Math.max(1, Math.min(50, Number(limit) || 10));
+  const skip = (parsedPage - 1) * parsedLimit;
+
+  const query = { author: req.user._id };
+
+  if (search && typeof search === "string" && search.trim()) {
+    const searchTerm = search.trim();
+    query.$or = [
+      { title: { $regex: searchTerm, $options: "i" } },
+      { content: { $regex: searchTerm, $options: "i" } },
+      { subtitle: { $regex: searchTerm, $options: "i" } },
+    ];
+  }
+
+  if (category) {
+    query.category = category;
+  }
+
+  const sortOrder = order === "asc" ? 1 : -1;
+  const sortOptions = {};
+  sortOptions[sortBy] = sortOrder;
+
+  const [blogs, totalBlogs] = await Promise.all([
+    Blog.find(query)
+      .populate("author", "fullName username email")
+      .populate("category", "name slug")
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parsedLimit),
+    Blog.countDocuments(query),
+  ]);
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      blogs,
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        totalBlogs,
+        totalPages: Math.ceil(totalBlogs / parsedLimit),
+      },
+    }, "My blogs fetched successfully")
+  );
+});
+
+export { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs, getMyBlogs };
+export default { createBlog, updateBlog, deleteBlog, getBlogById, getAllBlogs, getMyBlogs };

@@ -2,7 +2,7 @@ import React from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { getProfile, logoutUser } from "../services/authService";
-import { getBlogs } from "../services/blogService";
+import { getMyBlogs } from "../services/blogService";
 
 
 const colors = {
@@ -708,7 +708,7 @@ export default function Profile() {
       try {
         const [profileResponse, blogsResponse] = await Promise.all([
           getProfile(),
-          getBlogs({ limit: 50 }),
+          getMyBlogs({ limit: 50 }),
         ]);
         const profile = profileResponse.data?.user;
         if (profile) {

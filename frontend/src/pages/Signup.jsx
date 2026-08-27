@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
+import Navbar from "../components/Navbar";
 
 const colors = {
   bg: "#fafaf8",
@@ -148,14 +149,13 @@ export default function Signup() {
 
       <Wordmark />
 
-      <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 md:px-14 py-6">
-        <span style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.14em", color: colors.muted }}>
-          YOURSPACE
-        </span>
-        <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
-          02 / REGISTER
-        </span>
-      </header>
+      <Navbar
+  active="/signup"
+  showHome
+  showExplore
+  showCategories={false}
+  showWrite={false}
+/>
 
       <main className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 px-5 sm:px-8 md:px-14 pt-10 pb-20 lg:min-h-[80vh]">
         {/* Left: editorial copy */}

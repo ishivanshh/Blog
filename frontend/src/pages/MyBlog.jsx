@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBlogs } from "../services/blogService";
+import { getMyBlogs } from "../services/blogService";
 
 const colors = {
   bg: "#fafaf8",
@@ -453,7 +453,7 @@ export default function MyBlogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await getBlogs({ limit: 50 });
+        const response = await getMyBlogs({ limit: 50 });
         const results = Array.isArray(response.data?.blogs) ? response.data.blogs : [];
         setBlogs(results.map((blog) => ({
           ...blog,
@@ -643,4 +643,3 @@ export default function MyBlogs() {
     </div>
   );
 }
-

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-
+import { getBlogs } from "../services/blogService";
+import Navbar from "../components/Navbar";
 const colors = {
   bg: "#fafaf8",
   ink: "#141414",
@@ -16,6 +17,22 @@ const fonts = {
   mono: "'Space Mono', monospace",
 };
 const navItems = [{ name: "HOME", path: "/" }, { name: "EXPLORE", path: "/explore" }, { name: "CATEGORIES", path: "/categories" },];
+
+const getReadTime = (content = "") => {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(words / 200))} MIN`;
+};
+
+const normalizeBlog = (blog) => ({
+  id: blog._id || blog.id,
+  image: blog.coverImage || null,
+  category: typeof blog.category === "string" ? blog.category : blog.category?.name || "Uncategorized",
+  title: blog.title,
+  excerpt: blog.excerpt || blog.subtitle || blog.content?.slice(0, 160) || "",
+  author: blog.author?.fullName || blog.author?.username || "YOURSPACE",
+  readTime: blog.readingTime ? `${blog.readingTime} MIN` : getReadTime(blog.content),
+});
+
 function Wordmark() {
   return (
     <div
@@ -41,34 +58,6 @@ function Wordmark() {
         YOURSPACE
       </span>
     </div>
-  );
-}
-
-function Nav() {
-  return (
-    <header
-      className="relative z-10 flex flex-wrap items-center justify-between gap-y-3 px-5 sm:px-8 md:px-14 py-5 md:py-6"
-      style={{ borderBottom: `1px solid ${colors.hairline}` }}
-    >
-      <Link to="/">
-        <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.14em", fontWeight: 700, color: colors.ink }}>
-          YOURSPACE
-        </span>
-      </Link>
-      <nav className="hidden md:flex items-center gap-8 order-3 md:order-2 w-full md:w-auto justify-center md:justify-start"> {navItems.map((item) => (<NavLink key={item.name} to={item.path} style={({ isActive }) => ({ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: isActive ? colors.ink : colors.muted, borderBottom: isActive ? `1px solid ${colors.ink}` : "none", paddingBottom: 2, })} > {item.name} </NavLink>))} </nav>
-      <div className="flex items-center gap-3 sm:gap-6 order-2 md:order-3">
-        <a href="/login" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
-          LOGIN
-        </a>
-        <a
-          href="/signup"
-          className="px-4 sm:px-5 py-2"
-          style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", fontWeight: 700, backgroundColor: colors.accent, color: colors.ink }}
-        >
-          SIGNUP
-        </a>
-      </div>
-    </header>
   );
 }
 
@@ -127,40 +116,50 @@ function CategoryStrip() {
   );
 }
 
-function FeaturedPost() {
+function FeaturedPost({ post }) {
+  if (!post) return null;
+
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 h-[240px] sm:h-[340px] lg:h-[440px] overflow-hidden">
-          <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7j2qiepaKDqRRZIuDgLwFgJX5ZCI-ITo0lkp1zyQFjwpIKVnfvROTxEH2WaAsQYg_3qhYOUf7U18tHQGJzdV8rQOJHiyfDivYr0tGc9CFORqnANb6Kj3Z5vpKRtgNyPdRH46k5ytO7yXK8JTqPOHlcTCjh9s-WzdDI4t4O1sqzhgnE2XV24AY1kTr2Ah7LeSe79EEnrtpncekPdY9dWYthBzF1LId65-U-unxdDWUQeNe_KxUMJi4"
-            alt="Featured post"
-            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-          />
+          {post.image ? (
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: colors.faint }}>
+              <span style={{ fontFamily: fonts.mono, fontSize: 11, color: colors.muted, letterSpacing: "0.1em" }}>NO IMAGE</span>
+            </div>
+          )}
         </div>
         <div className="lg:col-span-5">
           <span style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.12em", color: colors.muted }}>
-            TECHNOLOGY — 5 MIN READ
+            {post.category.toUpperCase()} — {post.readTime} READ
           </span>
           <h2
             className="mt-4 mb-5"
             style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 34, lineHeight: 1.12, color: colors.ink }}
           >
-            The Future of Generative Interfaces in Editorial Design
+            {post.title}
           </h2>
           <p style={{ fontFamily: fonts.display, fontSize: 16, lineHeight: 1.6, color: colors.muted }}>
-            Exploring how AI-driven layouts are reshaping the way we consume long-form content on the web.
+            {post.excerpt}
           </p>
           <div className="flex items-center gap-3 mt-7">
             <div className="w-9 h-9 overflow-hidden rounded-full" style={{ backgroundColor: colors.faint }}>
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4lk6ijnFk_WHrqQqiS7_7yuFDjUB-xTx9PS2nvpGMhDRIsEOSspKJXnjFBW2es2quQ-Ecbwbl02Q8Ba8rWesikeUktusUR6pb-0fyM1BCIQO-SjZwoEcSY4XVmHk7Jh9RizkbKtnzYlRRdz8FvcfV0j1iUa_b829PVyAD-yfnu2HJAHleIVEanxJn7oG07A5DXw_wJXpBAbZZAIhgvcRhwDHxB3C0T_LpQvBfiiZzIFq7xo7qWAag"
-                alt="Sarah Jenkins"
-                className="w-full h-full object-cover"
-              />
+              {post.image ? (
+                <img
+                  src={post.image}
+                  alt={post.author}
+                  className="w-full h-full object-cover"
+                />
+              ) : null}
             </div>
             <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.06em", color: colors.ink }}>
-              SARAH JENKINS
+              {post.author.toUpperCase()}
             </span>
           </div>
         </div>
@@ -204,51 +203,27 @@ function PostCard({ image, category, title, excerpt, author, readTime, index }) 
   );
 }
 
-function LatestWritings() {
-  const posts = [
-    {
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuBit4PQzXK5SjF-Bn6md18fEidpL7hJye3pUybuQCFsiCWYd3o8lEy1zsmIOCDS6_4L66YjCN9IkrK6HCRFKFIuAhxy_-2xXdJiIVF936VxFTRmslkxpKyBDaUCo1SNHAnbCyEWmSihT-TSTDgyEvBQHCR9eJKjNPm-zqPPxSAYLop2DlXSUH23z3kXBtXasRiaKn3lLaptP-OIEgMNw9egibVbO9yfqfQ5bbTTjYvY8RMqNvvLc1Di",
-      category: "Productivity",
-      title: "Finding Focus in a World of Noise",
-      excerpt: "Practical strategies for deep work and eliminating digital distractions.",
-      author: "David Chen",
-      readTime: "3 MIN",
-    },
-    {
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCb9bixrZ-il6igmMG5YTVnkKPVLoy4fLxWcnrR90fkpQpof6yk-IywEUItOWIEzW4blL8ctGLGHHzIBv_pZkg64XBcOP_8Uj7y59C5Eqg1Lnqk9KzH6x_R6wQAKr2wejyEomMDF44Sa3Dojur2bsCa2PEqoOvHqnltlqkvDxIVsc0aGgTX9efS7_W4xbyj3ofAG3YOG6dGapsgD3t6FmGAWSPu4_5-ytfBYNFKs71JulMIlDDHBhfo",
-      category: "Web Development",
-      title: "The Elegance of Vanilla CSS",
-      excerpt: "Why returning to the basics of cascading style sheets leads to cleaner code.",
-      author: "Elena Rostova",
-      readTime: "7 MIN",
-    },
-    {
-      image: null,
-      category: "AI & ML",
-      title: "Demystifying Large Language Models",
-      excerpt: "A plain-English explanation of how modern AI text generation works under the hood.",
-      author: "Marcus Thorne",
-      readTime: "12 MIN",
-    },
-  ];
-
+function LatestWritings({ posts }) {
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16" style={{ borderTop: `1px solid ${colors.hairline}` }}>
       <div className="flex flex-wrap items-end justify-between gap-y-3 mb-10 sm:mb-12">
         <h3 style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 30, color: colors.ink }}>
           Latest Writings
         </h3>
-        <a href="#" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
+        <a href="/explore" className="hover:underline" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.1em", color: colors.muted }}>
           VIEW ALL →
         </a>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {posts.map((p, i) => (
-          <PostCard key={p.title} {...p} index={i + 1} />
+          <PostCard key={p.id || p.title} {...p} index={i + 1} />
         ))}
       </div>
+      {posts.length === 0 && (
+        <p style={{ fontFamily: fonts.display, fontSize: 16, color: colors.muted }}>
+          Published blogs will appear here.
+        </p>
+      )}
     </section>
   );
 }
@@ -354,6 +329,25 @@ function Footer() {
 }
 
 export default function Home() {
+  const [posts, setPosts] = React.useState([]);
+  const [error, setError] = React.useState("");
+
+  React.useEffect(() => {
+    const loadBlogs = async () => {
+      try {
+        const response = await getBlogs({ limit: 6, sortBy: "createdAt", order: "desc" });
+        setPosts(Array.isArray(response.data?.blogs) ? response.data.blogs.map(normalizeBlog) : []);
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || "Unable to load blogs.");
+      }
+    };
+
+    loadBlogs();
+  }, []);
+
+  const featuredPost = posts.find((post) => post.image) || posts[0];
+  const latestPosts = posts.filter((post) => post.id !== featuredPost?.id).slice(0, 3);
+
   return (
     <div className="min-h-screen relative overflow-hidden antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
       <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -365,11 +359,22 @@ export default function Home() {
       <Wordmark />
 
       <div className="relative z-10">
-        <Nav />
+        <Navbar
+  active="/explore"
+  showHome
+  showExplore
+  showCategories={false}
+  showWrite={false}
+/>
         <Hero />
         <CategoryStrip />
-        <FeaturedPost />
-        <LatestWritings />
+        {error && (
+          <p className="px-5 sm:px-8 md:px-14 pt-8" role="alert" style={{ fontFamily: fonts.mono, fontSize: 11, color: "#c23b3b" }}>
+            {error}
+          </p>
+        )}
+        <FeaturedPost post={featuredPost} />
+        <LatestWritings posts={latestPosts} />
         <Newsletter />
         <Footer />
       </div>
