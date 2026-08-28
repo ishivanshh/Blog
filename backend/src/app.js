@@ -17,6 +17,20 @@ app.use((req, res, next) => {
   next();
 });
 
+import cors from "cors";
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://yourspace-eight.vercel.app///"
+    ],
+    credentials: true,
+  })
+);
+
+
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN?.split(",") || ["http://localhost:5173"],
