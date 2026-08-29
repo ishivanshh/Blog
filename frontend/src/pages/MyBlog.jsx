@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMyBlogs } from "../services/blogService";
+import BlogOverlay from "../components/OpenBlog";
+import { normalizeBlogForOverlay } from "../utils/blogOverlay";
 
 const colors = {
   bg: "#fafaf8",
@@ -14,6 +16,13 @@ const colors = {
 const fonts = {
   display: "'Fraunces', serif",
   mono: "'Space Mono', monospace",
+};
+
+const openWithKeyboard = (event, callback) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    callback();
+  }
 };
 
 /* -------------------------------------------------------
@@ -127,10 +136,14 @@ function BlogStats({ blogs }) {
    Blog Row
 ------------------------------------------------------- */
 
-function BlogRow({ blog, isDraft }) {
+function BlogRow({ blog, isDraft, onOpen }) {
   return (
     <article
-      className="group grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-7"
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(event) => openWithKeyboard(event, onOpen)}
+      className="group grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-7 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
       style={{
         borderBottom: `1px solid ${colors.hairline}`,
       }}
@@ -236,7 +249,8 @@ function BlogRow({ blog, isDraft }) {
         {isDraft ? (
           <>
             <Link
-              to={`/writeblog/${blog.id}`}
+              to={`/editblog/${blog.id}`}
+              onClick={(event) => event.stopPropagation()}
               className="hover:opacity-60 transition-opacity"
               style={{
                 fontFamily: fonts.mono,
@@ -257,7 +271,8 @@ function BlogRow({ blog, isDraft }) {
                 letterSpacing: "0.08em",
                 color: colors.muted,
               }}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 // TODO: connect delete draft API
                 console.log("Delete draft:", blog.id);
               }}
@@ -267,8 +282,12 @@ function BlogRow({ blog, isDraft }) {
           </>
         ) : (
           <>
-            <Link
-              to={`/blog/${blog.id}`}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpen();
+              }}
               className="hover:opacity-60 transition-opacity"
               style={{
                 fontFamily: fonts.mono,
@@ -278,10 +297,11 @@ function BlogRow({ blog, isDraft }) {
               }}
             >
               READ →
-            </Link>
+            </button>
 
             <Link
-              to={`/writeblog/${blog.id}`}
+              to={`/editblog/${blog.id}`}
+              onClick={(event) => event.stopPropagation()}
               className="hover:opacity-60 transition-opacity"
               style={{
                 fontFamily: fonts.mono,
@@ -303,7 +323,7 @@ function BlogRow({ blog, isDraft }) {
    Blog Section
 ------------------------------------------------------- */
 
-function BlogSection({ title, label, blogs, isDraft }) {
+function BlogSection({ title, label, blogs, isDraft, onOpenBlog }) {
   return (
     <section className="px-5 sm:px-8 md:px-14 pb-16">
       <div className="max-w-6xl">
@@ -362,6 +382,7 @@ function BlogSection({ title, label, blogs, isDraft }) {
                     .padStart(2, "0"),
                 }}
                 isDraft={isDraft}
+                onOpen={() => onOpenBlog(blog)}
               />
             ))}
           </div>
@@ -447,6 +468,7 @@ function EmptyState({ isDraft }) {
 
 export default function MyBlogs() {
   const [blogs, setBlogs] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -482,6 +504,7 @@ export default function MyBlogs() {
   const draftBlogs = blogs.filter(
     (blog) => blog.status === "Draft"
   );
+  const openBlog = (blog) => setSelectedBlog(normalizeBlogForOverlay(blog));
 
   return (
     <div
@@ -631,6 +654,7 @@ export default function MyBlogs() {
         label="LIVE WRITING"
         blogs={publishedBlogs}
         isDraft={false}
+        onOpenBlog={openBlog}
       />
 
       {/* Drafts */}
@@ -639,6 +663,12 @@ export default function MyBlogs() {
         label="UNFINISHED WRITING"
         blogs={draftBlogs}
         isDraft={true}
+        onOpenBlog={openBlog}
+      />
+      <BlogOverlay
+        blog={selectedBlog}
+        isOpen={Boolean(selectedBlog)}
+        onClose={() => setSelectedBlog(null)}
       />
     </div>
   );

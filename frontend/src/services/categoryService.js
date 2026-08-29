@@ -4,7 +4,7 @@ import api from "../api/axios";
  * Get all categories
  */
 export const getCategories = async () => {
-  const response = await api.get("/categories");
+  const response = await api.get("api/v1/categories");
 
   return response.data;
 };
@@ -13,7 +13,7 @@ export const getCategories = async () => {
  * Get category by ID
  */
 export const getCategoryById = async (categoryId) => {
-  const response = await api.get(`/categories/${categoryId}`);
+  const response = await api.get(`api/v1/categories/${categoryId}`);
 
   return response.data;
 };
@@ -22,7 +22,7 @@ export const getCategoryById = async (categoryId) => {
  * Create category
  */
 export const createCategory = async (categoryData) => {
-  const response = await api.post("/categories", categoryData);
+  const response = await api.post("api/v1/categories", categoryData);
 
   return response.data;
 };
@@ -32,7 +32,7 @@ export const createCategory = async (categoryData) => {
  */
 export const updateCategory = async (categoryId, categoryData) => {
   const response = await api.patch(
-    `/categories/${categoryId}`,
+    `api/v1/categories/${categoryId}`,
     categoryData
   );
 

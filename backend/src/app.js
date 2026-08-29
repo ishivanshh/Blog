@@ -1,11 +1,11 @@
 import express from "express";
-import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import healthCheck from "./controllers/healthCheck.controller.js";
 import errorMiddleware from "./middleware/error.middleware.js";
+
 
 const app = express();
 
@@ -18,12 +18,12 @@ app.use((req, res, next) => {
 });
 
 import cors from "cors";
-
+app.use(cors());
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://yourspace-eight.vercel.app///"
+      "https://yourspace-eight.vercel.app"
     ],
     credentials: true,
   })

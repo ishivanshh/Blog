@@ -1,7 +1,8 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { getBlogs } from "../services/blogService";
 import Navbar from "../components/Navbar";
+import BlogOverlay from "../components/OpenBlog";
+import { normalizeBlogForOverlay } from "../utils/blogOverlay";
 const colors = {
   bg: "#fafaf8",
   ink: "#141414",
@@ -16,14 +17,13 @@ const fonts = {
   display: "'Fraunces', serif",
   mono: "'Space Mono', monospace",
 };
-const navItems = [{ name: "HOME", path: "/" }, { name: "EXPLORE", path: "/explore" }, { name: "CATEGORIES", path: "/categories" },];
-
 const getReadTime = (content = "") => {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
   return `${Math.max(1, Math.ceil(words / 200))} MIN`;
 };
 
 const normalizeBlog = (blog) => ({
+  raw: blog,
   id: blog._id || blog.id,
   image: blog.coverImage || null,
   category: typeof blog.category === "string" ? blog.category : blog.category?.name || "Uncategorized",
@@ -32,6 +32,13 @@ const normalizeBlog = (blog) => ({
   author: blog.author?.fullName || blog.author?.username || "YOURSPACE",
   readTime: blog.readingTime ? `${blog.readingTime} MIN` : getReadTime(blog.content),
 });
+
+const openWithKeyboard = (event, callback) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    callback();
+  }
+};
 
 function Wordmark() {
   return (
@@ -116,12 +123,18 @@ function CategoryStrip() {
   );
 }
 
-function FeaturedPost({ post }) {
+function FeaturedPost({ post, onOpen }) {
   if (!post) return null;
 
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <article
+        role="button"
+        tabIndex={0}
+        onClick={onOpen}
+        onKeyDown={(event) => openWithKeyboard(event, onOpen)}
+        className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+      >
         <div className="lg:col-span-7 h-[240px] sm:h-[340px] lg:h-[440px] overflow-hidden">
           {post.image ? (
             <img
@@ -163,14 +176,20 @@ function FeaturedPost({ post }) {
             </span>
           </div>
         </div>
-      </div>
+      </article>
     </section>
   );
 }
 
-function PostCard({ image, category, title, excerpt, author, readTime, index }) {
+function PostCard({ image, category, title, excerpt, author, readTime, index, onOpen }) {
   return (
-    <article className="group">
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(event) => openWithKeyboard(event, onOpen)}
+      className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+    >
       <div className="h-52 overflow-hidden mb-5" style={!image ? { backgroundColor: colors.faint, display: "flex", alignItems: "center", justifyContent: "center" } : undefined}>
         {image ? (
           <img src={image} alt={title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
@@ -203,7 +222,7 @@ function PostCard({ image, category, title, excerpt, author, readTime, index }) 
   );
 }
 
-function LatestWritings({ posts }) {
+function LatestWritings({ posts, onOpenPost }) {
   return (
     <section className="relative z-10 px-5 sm:px-8 md:px-14 py-12 sm:py-16" style={{ borderTop: `1px solid ${colors.hairline}` }}>
       <div className="flex flex-wrap items-end justify-between gap-y-3 mb-10 sm:mb-12">
@@ -216,7 +235,7 @@ function LatestWritings({ posts }) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {posts.map((p, i) => (
-          <PostCard key={p.id || p.title} {...p} index={i + 1} />
+          <PostCard key={p.id || p.title} {...p} index={i + 1} onOpen={() => onOpenPost(p)} />
         ))}
       </div>
       {posts.length === 0 && (
@@ -228,8 +247,8 @@ function LatestWritings({ posts }) {
   );
 }
 function Newsletter() {
-  const [email, setEmail] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -329,10 +348,11 @@ function Footer() {
 }
 
 export default function Home() {
-  const [posts, setPosts] = React.useState([]);
-  const [error, setError] = React.useState("");
+  const [posts, setPosts] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [error, setError] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadBlogs = async () => {
       try {
         const response = await getBlogs({ limit: 6, sortBy: "createdAt", order: "desc" });
@@ -347,6 +367,7 @@ export default function Home() {
 
   const featuredPost = posts.find((post) => post.image) || posts[0];
   const latestPosts = posts.filter((post) => post.id !== featuredPost?.id).slice(0, 3);
+  const openPost = (post) => setSelectedBlog(normalizeBlogForOverlay(post.raw || post));
 
   return (
     <div className="min-h-screen relative overflow-hidden antialiased" style={{ backgroundColor: colors.bg, color: colors.ink }}>
@@ -373,11 +394,16 @@ export default function Home() {
             {error}
           </p>
         )}
-        <FeaturedPost post={featuredPost} />
-        <LatestWritings posts={latestPosts} />
+        <FeaturedPost post={featuredPost} onOpen={() => openPost(featuredPost)} />
+        <LatestWritings posts={latestPosts} onOpenPost={openPost} />
         <Newsletter />
         <Footer />
       </div>
+      <BlogOverlay
+        blog={selectedBlog}
+        isOpen={Boolean(selectedBlog)}
+        onClose={() => setSelectedBlog(null)}
+      />
     </div>
   );
 }

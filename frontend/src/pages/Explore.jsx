@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer";
 import { getBlogs } from "../services/blogService";
+import BlogOverlay from "../components/OpenBlog";
+import { normalizeBlogForOverlay } from "../utils/blogOverlay";
 
 // Same tokens as the rest of the Awwwards-themed YOURSPACE pages.
 const colors = {
@@ -40,6 +42,7 @@ const getReadTime = (content = "") => {
 };
 
 const normalizeBlog = (blog, index) => ({
+  raw: blog,
   id: blog._id || blog.id,
   size: SIZE_SEQUENCE[index % SIZE_SEQUENCE.length],
   image: blog.coverImage || null,
@@ -49,6 +52,13 @@ const normalizeBlog = (blog, index) => ({
   author: blog.author?.fullName || blog.author?.username || "YOURSPACE",
   readTime: blog.readingTime ? `${blog.readingTime} MIN` : getReadTime(blog.content),
 });
+
+const openWithKeyboard = (event, callback) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    callback();
+  }
+};
 
 function Wordmark() {
   return (
@@ -149,11 +159,15 @@ function SearchAndFilter({ query, setQuery, category, setCategory, categories })
   );
 }
 
-function PostCard({ post }) {
+function PostCard({ post, onOpen }) {
   const isBig = post.size === "large" || post.size === "wide" || post.size === "tall";
   return (
     <article
-      className={`group relative flex flex-col justify-end overflow-hidden ${SIZE_CLASSES[post.size]} ${SIZE_HEIGHT[post.size]}`}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(event) => openWithKeyboard(event, onOpen)}
+      className={`group relative flex flex-col justify-end overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${SIZE_CLASSES[post.size]} ${SIZE_HEIGHT[post.size]}`}
       style={{ backgroundColor: colors.faint }}
     >
       {post.image ? (
@@ -242,6 +256,7 @@ export default function Explore() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("ALL");
   const [posts, setPosts] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -308,7 +323,11 @@ export default function Explore() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:auto-rows-[180px]">
               {filtered.map((post) => (
-                <PostCard key={post.id || post.title} post={post} />
+                <PostCard
+                  key={post.id || post.title}
+                  post={post}
+                  onOpen={() => setSelectedBlog(normalizeBlogForOverlay(post.raw || post))}
+                />
               ))}
             </div>
           )}
@@ -316,6 +335,11 @@ export default function Explore() {
 
         <Footer />
       </div>
+      <BlogOverlay
+        blog={selectedBlog}
+        isOpen={Boolean(selectedBlog)}
+        onClose={() => setSelectedBlog(null)}
+      />
     </div>
   );
 }
